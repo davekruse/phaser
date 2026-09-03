@@ -12,8 +12,8 @@ them.
 
 | Step | Command            | Model                  | What it does |
 |------|--------------------|------------------------|--------------|
-| 1    | `/phaser:plan`      | Fable 5                | Interview -> append Phase N to the plan file |
-| 2    | `/phaser:propose`   | Fable 5                | `/opsx:propose` with ALL architectural decisions made up front |
+| 1    | `/phaser:plan`      | Fable 5.1              | Interview -> append Phase N to the plan file |
+| 2    | `/phaser:propose`   | Fable 5.1              | `/opsx:propose` with ALL architectural decisions made up front |
 | 3    | `/phaser:scrutinize`| Opus (latest)          | (after `/clear`) question the spec from multiple angles, item by item |
 | 4    | `/phaser:apply`     | Sonnet + Opus advisor  | `/opsx:apply` — faithful execution; spec conflicts go to the `spec-advisor` subagent |
 | 5    | `/phaser:review`    | Opus (latest)          | (after `/clear`) senior review of staged+unstaged changes, item by item |
@@ -21,7 +21,7 @@ them.
 
 Model pins use the `opus` / `sonnet` aliases, which resolve to the newest
 model of each tier — so when new Opus/Sonnet versions ship, those steps
-upgrade automatically without editing pins. `claude-fable-5` is an exact
+upgrade automatically without editing pins. `claude-fable-5-1` is an exact
 model id (no alias exists for the Fable tier), so steps 1–2 need a one-line
 pin edit when a newer Fable ships.
 
@@ -94,8 +94,8 @@ phaser/
 │   ├── plugin.json               # the plugin manifest
 │   └── marketplace.json          # "krusetech" catalog pointing at "./"
 ├── commands/
-│   ├── plan.md                   # /phaser:plan       (model: claude-fable-5)
-│   ├── propose.md                # /phaser:propose    (model: claude-fable-5)
+│   ├── plan.md                   # /phaser:plan       (model: claude-fable-5-1)
+│   ├── propose.md                # /phaser:propose    (model: claude-fable-5-1)
 │   ├── scrutinize.md             # /phaser:scrutinize (model: opus)
 │   ├── apply.md                  # /phaser:apply      (model: sonnet)
 │   ├── review.md                 # /phaser:review     (model: opus)

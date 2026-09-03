@@ -1,7 +1,7 @@
 ---
 description: "Step 1 of 6 — Discuss and define requirements for the next phase of development, then record it as the next numbered phase in the (optionally scoped) implementation plan file"
 argument-hint: "[optional: scope] [optional: phase number] [optional: one-line summary of what this phase should accomplish]"
-model: claude-fable-5
+model: claude-fable-5-1
 disable-model-invocation: true
 ---
 
