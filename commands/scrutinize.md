@@ -89,22 +89,12 @@ Present a one-line numbered summary of all findings first, so the user knows
 the shape of the conversation. Then walk through them ONE at a time — never
 dump the full analysis at once.
 
-For each item, first explain it in text: what is undefined or being
-challenged, why it matters, and honest pros and cons for each option. Then
-present the choice with the AskUserQuestion tool (one question per finding)
-so the user selects rather than types:
+Put each item to the user via the **decision protocol** in
+`${CLAUDE_PLUGIN_ROOT}/reference/decision-protocol.md` (read it first). Options:
 
-- For a **Question**: options are your proposed default (first, labeled
-  "(Recommended)") plus the plausible alternatives; each option's description
-  states its consequence.
-- For a **Decision**: one option per candidate (usually 2–3), your
-  recommendation first and labeled "(Recommended)"; pack the key pro and con
-  into each option's description.
-
-The tool's built-in "Other" choice covers free-form redefinition, so don't
-add your own catch-all option. Record the resolution of each item before
-moving to the next. If AskUserQuestion is unavailable in the environment,
-fall back to asking in text.
+- For a **Question**: your proposed default (Recommended) plus the plausible
+  alternatives, each description stating its consequence.
+- For a **Decision**: one option per candidate.
 
 ## Step 4: Fold resolutions back into the spec
 

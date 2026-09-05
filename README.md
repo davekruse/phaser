@@ -108,5 +108,7 @@ phaser/
 │   └── archive.md                # /phaser:archive    (model: sonnet)
 ├── agents/
 │   └── spec-advisor.md           # Opus advisor consulted by /phaser:apply
+├── reference/
+│   └── decision-protocol.md      # shared describe-then-select protocol
 └── README.md
 ```

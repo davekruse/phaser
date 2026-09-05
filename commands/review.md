@@ -72,16 +72,12 @@ style opinions that a linter/formatter owns.
 Present a one-line numbered summary of all findings (with severities) first.
 Then walk through them ONE at a time, exactly like scrutinize:
 
-- Explain the finding, show the relevant code, and explain the impact. Where
-  multiple remedies exist, give pros and cons and a recommendation in text.
-- Then present the choice with the AskUserQuestion tool (one question per
-  finding): "Fix now" with your recommended remedy first, labeled
-  "(Recommended)" (additional options for alternative remedies where they
-  exist), plus "Defer" and "Accept as-is"; each description carries the key pro
-  AND con of that path, so the trade-off is visible in the picker itself rather
-  than only in the text above it.
-  The built-in "Other" covers free-form direction — don't add
-  your own catch-all. Fall back to asking in text if the tool is unavailable.
+- Explain the finding, show the relevant code, and explain the impact.
+- Put it to the user via the **decision protocol** in
+  `${CLAUDE_PLUGIN_ROOT}/reference/decision-protocol.md` (read it first). Options:
+  "Fix now" with your recommended remedy (Recommended), further "Fix now"
+  variants for alternative remedies where they exist, plus "Defer" and
+  "Accept as-is".
 - Apply "fix now" resolutions immediately, record deferrals (where noted),
   then continue to the next item.
 
