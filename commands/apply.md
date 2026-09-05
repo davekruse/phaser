@@ -34,7 +34,8 @@ execution, not design.
 - If that phase's status is not "Scrutinized", warn the user that the spec
   has not been through `/phaser:scrutinize` and ask whether to proceed anyway.
 - Record the base: `git rev-parse HEAD` now, before any changes — the review
-  step diffs from it.
+  step diffs from it. If the status line already carries a base (a re-apply
+  after review), keep that one.
 
 ## Step 2: Apply
 

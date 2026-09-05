@@ -16,7 +16,7 @@ them.
 | 2    | `/phaser:propose`   | Fable 5.1              | `/opsx:propose` with ALL architectural decisions made up front |
 | 3    | `/phaser:scrutinize`| Opus (latest)          | (after `/clear`) question the spec from multiple angles, item by item |
 | 4    | `/phaser:apply`     | Sonnet + Opus advisor  | `/opsx:apply` — faithful execution; spec conflicts go to the `spec-advisor` subagent |
-| 5    | `/phaser:review`    | Opus (latest)          | (after `/clear`) senior review of staged+unstaged changes, item by item |
+| 5    | `/phaser:review`    | Opus (latest)          | (after `/clear`) senior review of the phase's changes, item by item |
 | 6    | `/phaser:archive`   | Sonnet (latest)        | `/opsx:archive` + mark phase Complete |
 
 Model pins use the `opus` / `sonnet` aliases, which resolve to the newest

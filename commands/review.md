@@ -1,5 +1,5 @@
 ---
-description: "Step 5 of 6 — With a fresh context (run /clear first), perform a senior-dev code review of staged and unstaged changes against the phase plan and spec, iterating through findings with the user"
+description: "Step 5 of 6 — With a fresh context (run /clear first), perform a senior-dev code review of the phase's changes against the phase plan and spec, iterating through findings with the user"
 argument-hint: "[optional: openspec change id, defaults to the phase's active change]"
 model: opus
 disable-model-invocation: true
@@ -92,7 +92,8 @@ yes, yes-with-deferred-items, or no (in which case list what must happen,
 possibly another `/phaser:apply` pass).
 
 Update the phase status line in the plan file to
-`**Status:** Reviewed (<change id>)` and append a short "Review notes" line to
+`**Status:** Reviewed (<change id>, base <sha>)` (carry the base forward
+so a follow-up apply/review pass still covers the whole phase) and append a short "Review notes" line to
 the phase section recording deferred items, if any.
 
 Then, if the verdict is yes (or yes-with-deferred-items) and the user is
