@@ -75,9 +75,9 @@ Then walk through them ONE at a time, exactly like scrutinize:
 - Explain the finding, show the relevant code, and explain the impact.
 - Put it to the user via the **decision protocol** in
   `${CLAUDE_PLUGIN_ROOT}/reference/decision-protocol.md` (read it
-  first). Options: "Fix now" with your recommended remedy (Recommended), further "Fix now"
-  variants for alternative remedies where they exist, plus "Defer" and
-  "Accept as-is".
+  first). Options: "Fix now" with your recommended remedy (Recommended),
+  further "Fix now" variants for alternative remedies where they exist, plus
+  "Defer" and "Accept as-is".
 - Apply "fix now" resolutions immediately, record deferrals (where noted),
   then continue to the next item.
 
