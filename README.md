@@ -50,13 +50,14 @@ escalated by the advisor during `apply` — follows the same shape:
 `/phaser:plan` opens by asking what the phase should accomplish — including
 `/phaser:plan ats`, where `ats` is the plan scope, not the thing to build.
 
-The plan file (repo root of the app you're building) is the append-only
+The plan file (`docs/phases/` in the app you're building) is the append-only
 memory of the project: one numbered section per phase, with a status line the
 commands keep updated (Planned -> Proposed -> Scrutinized -> Implemented ->
 Reviewed -> Complete).
 
 Plans can be **scoped**: `/phaser:plan ats 10` records Phase 10 in
-`implementation-plan-ats.md` instead of the default `implementation-plan.md`,
+`docs/phases/implementation-plan-ats.md` instead of the default
+`docs/phases/implementation-plan.md`,
 so one repo can carry several independent phase sequences. The number is
 optional — `/phaser:plan ats` just means "next phase in the ats plan".
 Downstream

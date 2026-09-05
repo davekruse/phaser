@@ -19,7 +19,7 @@ stop and ask them to run `/clear` and invoke `/phaser:review` again.
 
 ## Step 1: Cold read
 
-1. The plan file — `implementation-plan.md`, or a scoped
+1. The plan file — `docs/phases/implementation-plan.md`, or a scoped
    `implementation-plan-<scope>.md`; with several plan files, the one whose
    status line references the change id in `$ARGUMENTS`, or ask which
    plan/scope if no id was given. Read the target phase (status

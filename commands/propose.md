@@ -18,9 +18,9 @@ decision is made here, now, by you and the user.
 ## Step 1: Load the phase
 
 - Resolve the plan file: `implementation-plan-<scope>.md` if `$ARGUMENTS`
-  starts with a scope token, otherwise the repo's single
-  `implementation-plan*.md`; if several plan files exist and no scope was
-  given, ask which one. Read it.
+  starts with a scope token, otherwise the single
+  `docs/phases/implementation-plan*.md`; if several plan files exist and no
+  scope was given, ask which one. Read it.
 - Target phase: the phase number in `$ARGUMENTS` if one was given, otherwise
   the highest-numbered phase with status "Planned". Any remaining text in
   `$ARGUMENTS` is extra context/constraints from the user — honor it alongside

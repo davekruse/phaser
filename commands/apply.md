@@ -24,7 +24,7 @@ execution, not design.
 - Identify the change: if `$ARGUMENTS` gives a change id, use it, and with
   several plan files pick the one whose status line references that id.
   Otherwise use the change id in the status line of the latest phase in the
-  plan file (`implementation-plan.md` or a scoped
+  plan file (`docs/phases/implementation-plan.md` or a scoped
   `implementation-plan-<scope>.md`); with several plan files and no id given,
   ask which plan/scope to use.
 - If that phase's status is not "Scrutinized", warn the user that the spec

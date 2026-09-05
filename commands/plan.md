@@ -9,14 +9,14 @@ disable-model-invocation: true
 
 You are facilitating the PLAN step of a phased iteration workflow. Your job is
 to interview the user, converge on a well-defined phase of development, and
-record it durably in the plan file at the repository root
+record it durably in the plan file under `docs/phases/`
 (`implementation-plan.md`, or `implementation-plan-<scope>.md` when scoped).
 
 ## Step 1: Read current state
 
 - Resolve the plan file. Plans may be scoped: `implementation-plan-<scope>.md`
   (e.g. `implementation-plan-ats.md` for scope `ats`) alongside or instead of
-  the unscoped `implementation-plan.md`, all in the repo root.
+  the unscoped `implementation-plan.md`, all in `docs/phases/`.
   - If `$ARGUMENTS` starts with a scope token (a short slug like `ats` — not a
     number, not the start of a summary sentence), use
     `implementation-plan-<scope>.md`. A first token matching an existing
@@ -25,8 +25,8 @@ record it durably in the plan file at the repository root
     unclear whether the first token is a scope or part of the summary, ask.
   - With no scope: use `implementation-plan.md`; if it doesn't exist but
     scoped plan files do, ask which scope this phase belongs to.
-- If the plan file does not exist, you will create it with a title and a short
-  preamble explaining that it is the numbered sequence of development phases
+- If the plan file does not exist, you will create it (and `docs/phases/` if
+  needed) with a title and a short preamble explaining that it is the numbered sequence of development phases
   for this application (or for this scope).
 - Determine the phase number N: an explicit number in `$ARGUMENTS` if given
   (warn if it collides with an existing phase or leaves a gap), otherwise the
