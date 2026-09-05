@@ -27,6 +27,9 @@ execution, not design.
   plan file (`docs/phases/implementation-plan.md` or a scoped
   `implementation-plan-<scope>.md`); with several plan files and no id given,
   ask which plan/scope to use.
+- Legacy location: if no plan file exists in `docs/phases/` but an
+  `implementation-plan*.md` sits at the repo root, offer to `git mv` it into
+  `docs/phases/` (creating the dir) before continuing.
 - If that phase's status is not "Scrutinized", warn the user that the spec
   has not been through `/phaser:scrutinize` and ask whether to proceed anyway.
 

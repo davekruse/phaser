@@ -31,6 +31,9 @@ Read, in order:
    status line references the change id in `$ARGUMENTS`, or ask which
    plan/scope if no id was given. Read the target phase (status "Proposed")
    and enough earlier phases for context
+   Legacy location: if no plan file exists in `docs/phases/` but an
+   `implementation-plan*.md` sits at the repo root, offer to `git mv` it into
+   `docs/phases/` (creating the dir) before continuing.
 2. The OpenSpec change artifacts for `$ARGUMENTS` (or the change id referenced
    in the phase's status line): proposal, design doc, spec deltas, task list
 3. The relevant parts of the codebase the proposal claims to touch — verify

@@ -20,6 +20,9 @@ You are closing the loop on a phase of the phased iteration workflow.
   plan file (`docs/phases/implementation-plan.md` or a scoped
   `implementation-plan-<scope>.md`); with several plan files and no id given,
   ask which plan/scope to use.
+- Legacy location: if no plan file exists in `docs/phases/` but an
+  `implementation-plan*.md` sits at the repo root, offer to `git mv` it into
+  `docs/phases/` (creating the dir) before continuing.
 - If the phase status is not "Reviewed", warn the user and confirm they want
   to archive anyway.
 - Check `git status`: if the phase's changes are still uncommitted, point that

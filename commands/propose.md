@@ -21,6 +21,9 @@ decision is made here, now, by you and the user.
   starts with a scope token, otherwise the single
   `docs/phases/implementation-plan*.md`; if several plan files exist and no
   scope was given, ask which one. Read it.
+- Legacy location: if no plan file exists in `docs/phases/` but an
+  `implementation-plan*.md` sits at the repo root, offer to `git mv` it into
+  `docs/phases/` (creating the dir) before continuing.
 - Target phase: the phase number in `$ARGUMENTS` if one was given, otherwise
   the highest-numbered phase with status "Planned". Any remaining text in
   `$ARGUMENTS` is extra context/constraints from the user — honor it alongside

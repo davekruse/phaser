@@ -25,9 +25,13 @@ record it durably in the plan file under `docs/phases/`
     unclear whether the first token is a scope or part of the summary, ask.
   - With no scope: use `implementation-plan.md`; if it doesn't exist but
     scoped plan files do, ask which scope this phase belongs to.
+- Legacy location: if no plan file exists in `docs/phases/` but an
+  `implementation-plan*.md` sits at the repo root, offer to `git mv` it into
+  `docs/phases/` (creating the dir) before continuing.
 - If the plan file does not exist, you will create it (and `docs/phases/` if
   needed) with a title and a short preamble explaining that it is the
-  numbered sequence of development phases for this application (or for this scope).
+  numbered sequence of development phases for this application (or for this
+  scope).
 - Determine the phase number N: an explicit number in `$ARGUMENTS` if given
   (warn if it collides with an existing phase or leaves a gap), otherwise the
   existing highest phase + 1, or 1.

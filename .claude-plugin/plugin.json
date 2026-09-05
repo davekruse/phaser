@@ -1,7 +1,7 @@
 {
   "name": "phaser",
   "description": "Phased iteration workflow: plan -> propose -> scrutinize -> apply -> review -> archive, built on OpenSpec (/opsx) with model pinning per step",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "author": {
     "name": "Dave Kruse"
   }

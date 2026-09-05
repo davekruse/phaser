@@ -87,6 +87,9 @@ Push changes to this repo, then on each machine:
 /plugin update phaser@krusetech
 ```
 
+Upgrading from ≤0.3.3: plan files moved from the repo root to `docs/phases/`.
+The next `/phaser:*` command you run will offer to `git mv` them for you.
+
 ## Layout
 
 ```

@@ -24,6 +24,9 @@ stop and ask them to run `/clear` and invoke `/phaser:review` again.
    status line references the change id in `$ARGUMENTS`, or ask which
    plan/scope if no id was given. Read the target phase (status
    "Implemented") and its acceptance criteria
+   Legacy location: if no plan file exists in `docs/phases/` but an
+   `implementation-plan*.md` sits at the repo root, offer to `git mv` it into
+   `docs/phases/` (creating the dir) before continuing.
 2. The OpenSpec change artifacts for `$ARGUMENTS` (or the change id in the
    phase status line): proposal, design doc, spec deltas, task list
 3. The changes under review: `git status`, then the full diff of staged AND
