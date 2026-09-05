@@ -26,8 +26,8 @@ record it durably in the plan file under `docs/phases/`
   - With no scope: use `implementation-plan.md`; if it doesn't exist but
     scoped plan files do, ask which scope this phase belongs to.
 - If the plan file does not exist, you will create it (and `docs/phases/` if
-  needed) with a title and a short preamble explaining that it is the numbered sequence of development phases
-  for this application (or for this scope).
+  needed) with a title and a short preamble explaining that it is the
+  numbered sequence of development phases for this application (or for this scope).
 - Determine the phase number N: an explicit number in `$ARGUMENTS` if given
   (warn if it collides with an existing phase or leaves a gap), otherwise the
   existing highest phase + 1, or 1.
