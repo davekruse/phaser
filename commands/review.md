@@ -74,8 +74,8 @@ Then walk through them ONE at a time, exactly like scrutinize:
 
 - Explain the finding, show the relevant code, and explain the impact.
 - Put it to the user via the **decision protocol** in
-  `${CLAUDE_PLUGIN_ROOT}/reference/decision-protocol.md` (read it first).
-  Options: "Fix now" with your recommended remedy (Recommended), further "Fix now"
+  `${CLAUDE_PLUGIN_ROOT}/reference/decision-protocol.md` (read it
+  first). Options: "Fix now" with your recommended remedy (Recommended), further "Fix now"
   variants for alternative remedies where they exist, plus "Defer" and
   "Accept as-is".
 - Apply "fix now" resolutions immediately, record deferrals (where noted),
@@ -90,8 +90,8 @@ possibly another `/phaser:apply` pass).
 Update the phase status line in the plan file to
 `**Status:** Reviewed (<change id>, base <sha>)` (carry the base forward
 so a follow-up apply/review pass still covers the whole phase) and append a
-short "Review notes" line to
-the phase section recording deferred items, if any.
+short "Review notes" line to the phase section recording deferred items, if
+any.
 
 Then, if the verdict is yes (or yes-with-deferred-items) and the user is
 satisfied, offer to continue:
