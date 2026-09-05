@@ -122,6 +122,6 @@ Confirm the phase is saved, then offer to continue immediately:
 > **Next step:** `/phaser:propose` — turn Phase N into an OpenSpec change
 > proposal. Want me to kick that off now?
 
-If the user says yes, invoke the `/phaser:propose` command via the SlashCommand
+If the user says yes, invoke the `/phaser:propose` command via the Skill
 tool. If not, leave the reminder above as the final line so it is easy to find
 later.

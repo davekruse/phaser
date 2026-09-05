@@ -14,15 +14,16 @@ You are closing the loop on a phase of the phased iteration workflow.
 
 ## Step 1: Preflight
 
-- Identify the change: if `$ARGUMENTS` gives a change id, use it, and with
-  several plan files pick the one whose status line references that id.
-  Otherwise use the change id in the status line of the latest phase in the
-  plan file (`docs/phases/implementation-plan.md` or a scoped
-  `implementation-plan-<scope>.md`); with several plan files and no id given,
-  ask which plan/scope to use.
+- Resolve the plan file: `docs/phases/implementation-plan.md`, or a scoped
+  `docs/phases/implementation-plan-<scope>.md`. With several plan files, use
+  the one whose status line references the change id in `$ARGUMENTS`; with
+  no id given, ask which plan/scope.
 - Legacy location: if no plan file exists in `docs/phases/` but an
   `implementation-plan*.md` sits at the repo root, offer to `git mv` it into
   `docs/phases/` (creating the dir) before continuing.
+- Target phase: the one whose status line references the change id in
+  `$ARGUMENTS`; with no id given, the highest-numbered phase with status
+  "Reviewed". If there is none, ask which phase to archive.
 - If the phase status is not "Reviewed", warn the user and confirm they want
   to archive anyway.
 - Check `git status`: if the phase's changes are still uncommitted, point that
@@ -31,7 +32,7 @@ You are closing the loop on a phase of the phased iteration workflow.
 
 ## Step 2: Archive
 
-Invoke the `/opsx:archive` command (via the SlashCommand tool) for the change
+Invoke the `/opsx:archive` command (via the Skill tool) for the change
 so its spec deltas are merged into the main specs and the change is moved to
 the archive.
 

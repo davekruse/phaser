@@ -26,14 +26,17 @@ Do not proceed in a warm context.
 
 Read, in order:
 
-1. The plan file — `docs/phases/implementation-plan.md`, or a scoped
-   `implementation-plan-<scope>.md`; with several plan files, the one whose
-   status line references the change id in `$ARGUMENTS`, or ask which
-   plan/scope if no id was given. Read the target phase (status "Proposed")
-   and enough earlier phases for context
+1. Resolve the plan file: `docs/phases/implementation-plan.md`, or a scoped
+   `docs/phases/implementation-plan-<scope>.md`. With several plan files, use
+   the one whose status line references the change id in `$ARGUMENTS`; with
+   no id given, ask which plan/scope.
    Legacy location: if no plan file exists in `docs/phases/` but an
    `implementation-plan*.md` sits at the repo root, offer to `git mv` it into
    `docs/phases/` (creating the dir) before continuing.
+   Target phase: the one whose status line references the change id in
+   `$ARGUMENTS`; with no id given, the highest-numbered phase with status
+   "Proposed". If there is none, ask which phase to scrutinize.
+   Read the target phase and enough earlier phases for context.
 2. The OpenSpec change artifacts for `$ARGUMENTS` (or the change id referenced
    in the phase's status line): proposal, design doc, spec deltas, task list
 3. The relevant parts of the codebase the proposal claims to touch — verify
@@ -122,5 +125,5 @@ Summarize what changed, then offer to continue immediately:
 > only holds until the first interactive pause). Want me to kick it off now
 > regardless?
 
-If the user says yes, invoke the `/phaser:apply` command via the SlashCommand
+If the user says yes, invoke the `/phaser:apply` command via the Skill
 tool. If not, leave the reminder above as the final line.

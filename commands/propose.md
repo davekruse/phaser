@@ -17,6 +17,8 @@ decision is made here, now, by you and the user.
 
 ## Step 1: Load the phase
 
+- If the project has no `openspec/` directory, stop: OpenSpec isn't set up
+  here (`openspec init` — see the README prerequisite).
 - Resolve the plan file: `implementation-plan-<scope>.md` if `$ARGUMENTS`
   starts with a scope token, otherwise the single
   `docs/phases/implementation-plan*.md`; if several plan files exist and no
@@ -83,7 +85,7 @@ prose and never bundle several decisions into one message:
 
 ## Step 3: Create the proposal
 
-Invoke the `/opsx:propose` command (via the SlashCommand tool) to create the
+Invoke the `/opsx:propose` command (via the Skill tool) to create the
 OpenSpec change proposal for this phase, feeding it the phase definition and
 your architectural decisions.
 

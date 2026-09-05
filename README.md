@@ -53,7 +53,8 @@ escalated by the advisor during `apply` — follows the same shape:
 The plan file (`docs/phases/` in the app you're building) is the append-only
 memory of the project: one numbered section per phase, with a status line the
 commands keep updated (Planned -> Proposed -> Scrutinized -> Implemented ->
-Reviewed -> Complete).
+Reviewed -> Complete). `Implemented` also records the base commit SHA so
+`review` can diff the whole phase, including anything committed along the way.
 
 Plans can be **scoped**: `/phaser:plan ats 10` records Phase 10 in
 `docs/phases/implementation-plan-ats.md` instead of the default
@@ -80,7 +81,8 @@ menu.
 
 ## Update
 
-Push changes to this repo, then on each machine:
+Bump `version` in `.claude-plugin/plugin.json` (`/plugin update` only picks
+up new versions), push, then on each machine:
 
 ```
 /plugin marketplace update krusetech

@@ -21,21 +21,24 @@ execution, not design.
 
 ## Step 1: Preflight
 
-- Identify the change: if `$ARGUMENTS` gives a change id, use it, and with
-  several plan files pick the one whose status line references that id.
-  Otherwise use the change id in the status line of the latest phase in the
-  plan file (`docs/phases/implementation-plan.md` or a scoped
-  `implementation-plan-<scope>.md`); with several plan files and no id given,
-  ask which plan/scope to use.
+- Resolve the plan file: `docs/phases/implementation-plan.md`, or a scoped
+  `docs/phases/implementation-plan-<scope>.md`. With several plan files, use
+  the one whose status line references the change id in `$ARGUMENTS`; with
+  no id given, ask which plan/scope.
 - Legacy location: if no plan file exists in `docs/phases/` but an
   `implementation-plan*.md` sits at the repo root, offer to `git mv` it into
   `docs/phases/` (creating the dir) before continuing.
+- Target phase: the one whose status line references the change id in
+  `$ARGUMENTS`; with no id given, the highest-numbered phase with status
+  "Scrutinized". If there is none, ask which phase to apply.
 - If that phase's status is not "Scrutinized", warn the user that the spec
   has not been through `/phaser:scrutinize` and ask whether to proceed anyway.
+- Record the base: `git rev-parse HEAD` now, before any changes — the review
+  step diffs from it.
 
 ## Step 2: Apply
 
-Invoke the `/opsx:apply` command (via the SlashCommand tool) for the change,
+Invoke the `/opsx:apply` command (via the Skill tool) for the change,
 and work through the task list in order.
 
 Rules of engagement:
@@ -70,7 +73,7 @@ Rules of engagement:
 
 Report which tasks were completed and any deviations that were user-approved
 along the way. Update the phase status line in the plan file to
-`**Status:** Implemented (<change id>)`.
+`**Status:** Implemented (<change id>, base <sha>)`.
 
 End your final message with this reminder block, verbatim, as the very last
 thing (this hand-off crosses a context clear, so it cannot be automated):

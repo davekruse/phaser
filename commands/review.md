@@ -19,25 +19,33 @@ stop and ask them to run `/clear` and invoke `/phaser:review` again.
 
 ## Step 1: Cold read
 
-1. The plan file — `docs/phases/implementation-plan.md`, or a scoped
-   `implementation-plan-<scope>.md`; with several plan files, the one whose
-   status line references the change id in `$ARGUMENTS`, or ask which
-   plan/scope if no id was given. Read the target phase (status
-   "Implemented") and its acceptance criteria
+1. Resolve the plan file: `docs/phases/implementation-plan.md`, or a scoped
+   `docs/phases/implementation-plan-<scope>.md`. With several plan files, use
+   the one whose status line references the change id in `$ARGUMENTS`; with
+   no id given, ask which plan/scope.
    Legacy location: if no plan file exists in `docs/phases/` but an
    `implementation-plan*.md` sits at the repo root, offer to `git mv` it into
    `docs/phases/` (creating the dir) before continuing.
+   Target phase: the one whose status line references the change id in
+   `$ARGUMENTS`; with no id given, the highest-numbered phase with status
+   "Implemented". If there is none, ask which phase to review.
+   Read the target phase and its acceptance criteria.
 2. The OpenSpec change artifacts for `$ARGUMENTS` (or the change id in the
    phase status line): proposal, design doc, spec deltas, task list
-3. The changes under review: `git status`, then the full diff of staged AND
-   unstaged changes (`git diff HEAD` plus untracked files). Read surrounding
-   code where needed to judge changes in context.
+3. The changes under review: `git status`, then everything since the base
+   SHA recorded in the phase's status line — `git diff <base>` (commits since
+   then plus staged and unstaged changes) plus untracked files. If no base is
+   recorded, fall back to `git diff HEAD` plus untracked files. Read
+   surrounding code where needed to judge changes in context.
 
 ## Step 2: Review on two axes
 
 Conduct a senior-developer-level review and build a written findings list.
 
 **Axis 1 — Fulfillment of the phase and spec**
+- First run `/opsx:verify <change id>` (via the Skill tool) if the project's
+  OpenSpec provides it. Its completeness/correctness/coherence report is
+  input, not verdict — confirm each claim against the diff yourself.
 - Is every task in the spec actually implemented, and implemented as
   specified (paths, names, contracts, behaviors)?
 - Are the phase's acceptance criteria met? Test each one against the diff.
@@ -93,6 +101,6 @@ satisfied, offer to continue:
 > **Next step:** `/phaser:archive` — archive the change and mark the phase
 > complete. Commit your work first if you haven't. Want me to run it now?
 
-If the user says yes, invoke the `/phaser:archive` command via the SlashCommand
+If the user says yes, invoke the `/phaser:archive` command via the Skill
 tool. If the verdict is no, the reminder is instead another `/phaser:apply`
 pass for the must-fix items.
