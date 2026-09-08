@@ -5,7 +5,7 @@ top of [OpenSpec](https://github.com/Fission-AI/OpenSpec) (`/opsx` commands).
 
 ## Why
 
-Slop is a crisis. Stop it. With the right framework, you and AI can craft really great products. 
+Slop is a crisis. Stop it. With the right framework, you and AI can make software a craft again. 
 
 ## The workflow
 
