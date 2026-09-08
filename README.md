@@ -3,6 +3,10 @@
 A Claude Code plugin implementing a phased, spec-driven development workflow on
 top of [OpenSpec](https://github.com/Fission-AI/OpenSpec) (`/opsx` commands).
 
+## Why
+
+Slop is a crisis. Stop it. With the right framework, you and AI can craft really great products. 
+
 ## The workflow
 
 Each phase of application development moves through six commands. Fresh-eyes
