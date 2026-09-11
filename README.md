@@ -14,6 +14,7 @@ top of [OpenSpec](https://github.com/Fission-AI/OpenSpec) (`/opsx` commands).
            ▀▀▀▀▀
 
 `/phaser:aim`
+
 `/phaser:stun`
 
 Or take it step by step.
