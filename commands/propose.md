@@ -17,8 +17,11 @@ decision is made here, now, by you and the user.
 
 ## Step 1: Load the phase
 
-- If the project has no `openspec/` directory, stop: OpenSpec isn't set up
-  here (`openspec init` — see the README prerequisite).
+- If the project has no `openspec/` directory, offer to run
+  `npx @fission-ai/openspec@latest init --tools claude` (non-interactive;
+  creates `openspec/` and the `/opsx:*` commands). If `/opsx:propose` is
+  still not available afterwards, tell the user to restart Claude Code and
+  re-run this command.
 - Resolve the plan file: `implementation-plan-<scope>.md` if `$ARGUMENTS`
   starts with a scope token, otherwise the single
   `docs/phases/implementation-plan*.md`; if several plan files exist and no

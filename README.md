@@ -70,8 +70,8 @@ commands take the same optional scope, or find the right plan file by which
 one references the OpenSpec change id; with a single plan file nothing
 changes.
 
-Prerequisite: OpenSpec's `/opsx` commands must be installed in the target
-project.
+Prerequisite: OpenSpec's `/opsx` commands in the target project —
+`/phaser:propose` offers to run `openspec init` if they're missing.
 
 ## Install (on any machine)
 
