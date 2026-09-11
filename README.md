@@ -3,9 +3,26 @@
 A Claude Code plugin implementing a phased, spec-driven development workflow on
 top of [OpenSpec](https://github.com/Fission-AI/OpenSpec) (`/opsx` commands).
 
+             ▄▄▄▄▄▄▄▄
+         ▄▄▄▄█▓▓▓▓▓▓█▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+        █▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█        ▀▄▀▄▀▄▀▄▀▄▀▄▀▄▶
+        █▓▓█▓▓█▓▓▓▓▓▓█▓▓▓▓▓▓█▓▓▓▓▓▓█▓▓▓▓▓▓▓▓▓█
+        ▀▀▀▀█▓▓▓▓█▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+            █▓▓▓▓█
+            █▓▓▓█
+           ▄█▓▓█
+           ▀▀▀▀▀
+
+`/phaser:aim`
+`/phaser:stun`
+
+Or take it step by step.
+
 ## Why
 
 Slop is a crisis. Stop it. With the right framework, you and AI can make software a craft again. 
+
+This is a 'human in the loop' framework with lots of automation and lots of human product ownership. 
 
 ## The workflow
 
