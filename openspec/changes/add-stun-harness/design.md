@@ -43,6 +43,12 @@ Chosen: commands check `$ARGUMENTS` for the literal token `--stun`.
 Rejected: "if stun was invoked in this session" — depends on the model
 noticing a distant invocation and survives compaction unreliably.
 
+Because `$ARGUMENTS` is also where each command finds its scope token, phase
+number and change id, every dispatched command's Step 1 opens by noting
+whether the literal `--stun` is present and then removing it from
+`$ARGUMENTS` before any other parsing. Without that, `/phaser:propose N
+--stun` folds `--stun` into propose's free-text "extra context" argument.
+
 ### D3. Cold reads and apply move into agents; commands become dispatch-and-walk
 Three new agent files. Commands keep: plan-file resolution, target-phase
 selection, status update, decision walk, hand-off. Agents get: everything
@@ -120,7 +126,10 @@ Each new agent file: frontmatter `name`, `description` (ends with "Used by
 order: **Input** (the identifiers it receives), **Isolation** (the
 verbatim paragraph: "You receive identifiers only. Read everything from
 disk: the plan file, `openspec/changes/<id>/`, the code. Never write under
-`docs/phases/`. Never ask the user anything — return findings and stop."),
+`docs/phases/`. Never ask the user anything — " then, per agent, "return
+findings and stop." for the scrutinizer and reviewer, and "do the work, then
+return your verdict block and stop." for the implementer, which must write
+code rather than report),
 **Read** (what to read, moved from the command's Step 1), **Examine**
 (angle list moved verbatim from the command's Step 2), **Return** (the D8
 block).
@@ -134,16 +143,32 @@ Phase: <N>
 Base SHA: <sha>            (apply/review only)
 Follow your agent definition and return your block.
 ```
-`subagent_type` is the agent name; `model` matches the agent's pin.
+`model` matches the agent's pin. `subagent_type` is the plugin-namespaced
+agent name — `phaser:scrutinizer`, `phaser:implementer`, `phaser:reviewer` —
+matching how the existing advisor is addressed (`phaser:spec-advisor`).
+
+The advisor relay in apply dispatches `phaser:spec-advisor` (model opus) with:
+```
+Change id: <id>
+<the implementer's BLOCKED ON block, verbatim>
+Classify and return your VERDICT block.
+```
+The change id is included so the advisor can read the artifacts itself, as its
+own definition instructs when it is given too little context.
 
 ### D11. Hand-off block shape (every command with a next step)
 ```
 > **Next step:** `/phaser:<next> <id>`. Want me to kick it off now?
 
-If `--stun` is in `$ARGUMENTS`, do not ask: invoke `/phaser:<next> <id> --stun`
-via the Skill tool now. Otherwise, if the user says yes, invoke
-`/phaser:<next> <id>` via the Skill tool; if not, leave the reminder as the
-final line.
+If the user answered any decision in this step with a request to stop, do not
+chain under either mode: report where the phase stands (plan file, phase
+number, current status line) and end.
+
+Otherwise, if `--stun` is in `$ARGUMENTS`, do not ask: invoke
+`/phaser:<next> <id> --stun <plan file>` via the Skill tool now, passing the
+plan file path this command resolved. If `--stun` is absent and the user says
+yes, invoke `/phaser:<next> <id>` via the Skill tool; if not, leave the
+reminder as the final line.
 ```
 Review's hand-off is conditional on verdict (see spec); on a no verdict
 there is no next-step invocation under either mode.
@@ -156,14 +181,37 @@ Descriptions of propose, scrutinize, apply, review, archive end with:
 `disable-model-invocation: true` is removed from scrutinize and review and
 present on plan, aim, stun.
 
-### D13. stun loop (body of `commands/stun.md`)
+### D13. stun is a one-shot dispatcher, not a loop (revised)
+A command invoked via the Skill tool loads its text into the current turn in
+place of what the model was doing; nothing returns to the caller. So a stun
+loop that "re-reads the status line after the step returns" can never run:
+once stun dispatches propose and propose chains to scrutinize, stun's loop
+body is several instruction-loads back. Worse, a model that *did* recall it
+would see the status advanced from Planned to Scrutinized and dispatch the
+next step even where the user had just asked to stop. That is D2's objection
+to implicit detection ("depends on the model noticing a distant invocation")
+applied to the loop.
+
+So the chain (D11) is the only driver, and `commands/stun.md` is a one-shot
+dispatcher:
 1. Resolve plan file (same bullets as apply, incl. legacy-location offer).
 2. Target phase per spec (change id → that phase; else highest-numbered not
    Complete; none → stop with the `/phaser:plan` message).
-3. Loop: re-read status line from disk → dispatch table (spec) → after the
-   step returns, re-read again; if unchanged, stop and report; if Complete,
-   stop with the completion message; else continue.
-4. Any decision answered with a stop request → stop, report status.
+3. Read that phase's status line from disk once and invoke the single matching
+   command from the dispatch table (spec), passing `--stun` and the resolved
+   plan file path. From there each command chains to the next per D11 until
+   one of them stops.
+4. Print nothing after the dispatch — the running step owns the report.
+
+Rejected: commands returning to stun under `--stun` instead of chaining —
+truer to the phase's original "stun loops" wording, but it depends on control
+returning to instruction text no longer in front of the model.
+
+The stop conditions are therefore owned by the chain, not by stun: archive's
+closing line already reports Complete and points at `/phaser:plan`; review's
+no verdict already suppresses its hand-off and lists the must-fix items; a
+user stop request is the D11 clause. Each one ends the run by not chaining.
+
 State the invariant in the file: "The plan file is the state machine.
 Never decide the next step from memory."
 
@@ -177,7 +225,35 @@ Never decide the next step from memory."
   when you invoke them and on the session model when stun drives.
 - "How decisions reach you" unchanged. "Fresh-eyes steps … `/clear`"
   sentence rewritten to say cold reads run in isolated subagents.
+- The between-phases context tip is worded without the literal string
+  `/clear` (e.g. "start each phase in a fresh context"), so the phase's
+  `grep -rn "/clear" commands/ README.md` criterion holds at zero.
 - Layout tree lists the new files.
+
+### D15. `/phaser:aim` reads `plan.md`; it does not invoke it
+`commands/plan.md` carries `disable-model-invocation: true`, which removes it
+from the model's invocable skill list — verified: a session's skill listing
+shows `phaser:propose`/`apply`/`archive` but not `phaser:plan`. So an aim that
+Skill-invokes plan cannot work. Instead aim's body instructs: read
+`${CLAUDE_PLUGIN_ROOT}/commands/plan.md` and follow it exactly, treating
+`$ARGUMENTS` as its arguments. Plan keeps its flag, there is still exactly one
+copy of plan's instructions, and `${CLAUDE_PLUGIN_ROOT}` in a command body is
+already proven here (scrutinize and apply read the decision protocol that way).
+Rejected: dropping `disable-model-invocation` from plan.md — contradicts the
+phase constraint that the flag stays on plan, and lets any model open a plan
+interview unprompted.
+
+### D16. Dispatched commands take an explicit plan file path
+Stun has already resolved the plan file, so rather than each command
+re-resolving it (and propose, which has no change id to disambiguate with,
+guessing the scope), stun passes the resolved path. Every dispatched command's
+`argument-hint` gains `[optional: plan file path]` and its Step 1 plan-file
+bullet gains a first clause: if `$ARGUMENTS` carries a path to an existing
+`implementation-plan*.md`, use it and skip resolution; otherwise resolve
+exactly as today. Manual invocation is unaffected. Commands pass the path on
+when they chain.
+Rejected: threading only a scope token to propose — smaller, but it leaves
+every other command re-resolving state stun already knows.
 
 ## Risks / Trade-offs
 

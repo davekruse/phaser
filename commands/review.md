@@ -1,104 +1,100 @@
 ---
-description: "Step 5 of 6 — With a fresh context (run /clear first), perform a senior-dev code review of the phase's changes against the phase plan and spec, iterating through findings with the user"
-argument-hint: "[optional: openspec change id, defaults to the phase's active change]"
+description: "Step 5 of 6 — Senior-dev code review of the phase's changes against the phase plan and spec, performed in an isolated subagent, iterating through findings with the user (invoke only when the user asks, as the user-confirmed hand-off from /phaser:apply, or when driven by /phaser:stun)"
+argument-hint: "[optional: openspec change id, defaults to the phase's active change] [optional: plan file path]"
 model: opus
-disable-model-invocation: true
 ---
+
+> Invocation note: this command is only ever run by the user directly, as a
+> user-confirmed hand-off from `/phaser:apply`, or when driven by
+> `/phaser:stun`. Never invoke it on your own initiative.
 
 # phaser:review — Senior review of the implementation
 
-You are the REVIEWER in a phased iteration workflow. Like scrutinize, your
-value comes from a cold read: judge only what is on disk and in the diff, not
-what anyone intended in conversation.
+The cold read of the diff happens in the `phaser:reviewer` subagent, which
+cannot see this conversation. Your job here is to dispatch it, walk the user
+through its findings, and apply the fixes they choose.
 
-## Step 0: Fresh context check
+## Step 1: Resolve the target
 
-This command is designed to run immediately after `/clear`. If this
-conversation contains prior work on this phase (the user forgot to clear),
-stop and ask them to run `/clear` and invoke `/phaser:review` again.
+- Note whether the literal token `--stun` is present in `$ARGUMENTS`, then
+  remove it from `$ARGUMENTS` before parsing anything else. It is a driver
+  flag, never a change id, scope or path.
+- If what remains of `$ARGUMENTS` carries a path to an existing
+  `implementation-plan*.md`, use that as the plan file and skip the
+  resolution bullets below.
+- Resolve the plan file: `docs/phases/implementation-plan.md`, or a scoped
+  `docs/phases/implementation-plan-<scope>.md`. With several plan files, use
+  the one whose status line references the change id in `$ARGUMENTS`; with
+  no id given, ask which plan/scope.
+- Legacy location: if no plan file exists in `docs/phases/` but an
+  `implementation-plan*.md` sits at the repo root, offer to `git mv` it into
+  `docs/phases/` (creating the dir) before continuing.
+- Target phase: the one whose status line references the change id in
+  `$ARGUMENTS`; with no id given, the highest-numbered phase with status
+  "Implemented". If there is none, ask which phase to review.
+- Read the base SHA from the phase's status line and pass it to the subagent.
 
-## Step 1: Cold read
+Do not read the diff before dispatching — that is the subagent's job, and
+reading it here would warm the context the subagent exists to keep cold. Once
+its findings are back, read whatever a finding needs.
 
-1. Resolve the plan file: `docs/phases/implementation-plan.md`, or a scoped
-   `docs/phases/implementation-plan-<scope>.md`. With several plan files, use
-   the one whose status line references the change id in `$ARGUMENTS`; with
-   no id given, ask which plan/scope.
-   Legacy location: if no plan file exists in `docs/phases/` but an
-   `implementation-plan*.md` sits at the repo root, offer to `git mv` it into
-   `docs/phases/` (creating the dir) before continuing.
-   Target phase: the one whose status line references the change id in
-   `$ARGUMENTS`; with no id given, the highest-numbered phase with status
-   "Implemented". If there is none, ask which phase to review.
-   Read the target phase and its acceptance criteria.
-2. The OpenSpec change artifacts for `$ARGUMENTS` (or the change id in the
-   phase status line): proposal, design doc, spec deltas, task list
-3. The changes under review: `git status`, then everything since the base
-   SHA recorded in the phase's status line — `git diff <base>` (commits since
-   then plus staged and unstaged changes) plus untracked files. If no base is
-   recorded, fall back to `git diff HEAD` plus untracked files. Read
-   surrounding code where needed to judge changes in context.
+## Step 2: Dispatch the reviewer
 
-## Step 2: Review on two axes
+Dispatch the `phaser:reviewer` subagent via the Agent tool with `model: opus`,
+`subagent_type: phaser:reviewer`, and exactly this prompt:
 
-Conduct a senior-developer-level review and build a written findings list.
+```
+Change id: <id>
+Plan file: <path>
+Phase: <N>
+Base SHA: <sha>
+Follow your agent definition and return your block.
+```
 
-**Axis 1 — Fulfillment of the phase and spec**
-- First run `/opsx:verify <change id>` (via the Skill tool) if the project's
-  OpenSpec provides it. Its completeness/correctness/coherence report is
-  input, not verdict — confirm each claim against the diff yourself.
-- Is every task in the spec actually implemented, and implemented as
-  specified (paths, names, contracts, behaviors)?
-- Are the phase's acceptance criteria met? Test each one against the diff.
-- Any silent deviations from the spec? Any scope creep beyond it?
-- If the phase lists "Key code touchpoints" with invariants (e.g. "X requires
-  no changes"), confirm the diff honors them — invariant-protected areas must
-  not be touched unless the spec explicitly says so.
+## Step 3: Walk the findings with the user
 
-**Axis 2 — Code quality**
-- Correctness: logic errors, edge cases, off-by-ones, error handling,
-  concurrency issues
-- Security: input validation, authn/z, injection, secrets in code
-- Tests: do they exist where the spec required, do they actually test the
-  behavior, would they catch regressions?
-- Maintainability: naming, duplication, dead code, consistency with existing
-  codebase conventions
-- Performance where it plausibly matters
+If the returned block reads `FINDINGS: 0`, skip to Step 4.
 
-Severity-tag each finding: **blocker**, **should-fix**, or **nit**. Discard
-style opinions that a linter/formatter owns.
-
-## Step 3: Iterate with the user, one item at a time
-
-Present a one-line numbered summary of all findings (with severities) first.
-Then walk through them ONE at a time, exactly like scrutinize:
+Otherwise present the subagent's numbered summary of all findings, with their
+severities, first. Then walk through them ONE at a time:
 
 - Explain the finding, show the relevant code, and explain the impact.
 - Put it to the user via the **decision protocol** in
-  `${CLAUDE_PLUGIN_ROOT}/reference/decision-protocol.md` (read it
-  first). Options: "Fix now" with your recommended remedy (Recommended),
-  further "Fix now" variants for alternative remedies where they exist, plus
+  `${CLAUDE_PLUGIN_ROOT}/reference/decision-protocol.md` (read it first).
+  Options: "Fix now" with the subagent's recommended remedy (Recommended),
+  further "Fix now" variants for the alternative remedies it supplied, plus
   "Defer" and "Accept as-is".
-- Apply "fix now" resolutions immediately, record deferrals (where noted),
-  then continue to the next item.
+- Apply "Fix now" edits yourself, immediately, before presenting the next
+  finding. Record deferrals, then continue to the next item.
 
-## Step 4: Verdict and hand off
+## Step 4: Verdict
 
-Close with an overall verdict: does this implementation fulfill Phase N —
-yes, yes-with-deferred-items, or no (in which case list what must happen,
-possibly another `/phaser:apply` pass).
+Take the overall verdict from the subagent's `VERDICT:` line.
 
-Update the phase status line in the plan file to
-`**Status:** Reviewed (<change id>, base <sha>)` (carry the base forward
-so a follow-up apply/review pass still covers the whole phase) and append a
-short "Review notes" line to the phase section recording deferred items, if
-any.
+- `yes` or `yes-with-deferred` — update the phase status line to
+  `**Status:** Reviewed (<change id>, base <sha>)` (carry the base forward so
+  a follow-up apply/review pass still covers the whole phase) and append a
+  short "Review notes" line to the phase section recording deferred items, if
+  any.
+- `no` — leave the status line at `Implemented (<change id>, base <sha>)`.
+  State plainly that the status did not advance and why, and list what must
+  happen (usually another `/phaser:apply` pass for the must-fix items). There
+  is no hand-off under either mode.
 
-Then, if the verdict is yes (or yes-with-deferred-items) and the user is
-satisfied, offer to continue:
+## Step 5: Hand off
 
-> **Next step:** `/phaser:archive` — archive the change and mark the phase
-> complete. Commit your work first if you haven't. Want me to run it now?
+On a `yes` or `yes-with-deferred` verdict only:
 
-If the user says yes, invoke the `/phaser:archive` command via the Skill
-tool. If the verdict is no, the reminder is instead another `/phaser:apply`
-pass for the must-fix items.
+> **Next step:** `/phaser:archive <change id>` — archive the change and mark
+> the phase complete. Commit your work first if you haven't. Want me to run it
+> now?
+
+If the user answered any decision in this step with a request to stop, do not
+chain under either mode: report where the phase stands (plan file, phase
+number, current status line) and end.
+
+Otherwise, if `--stun` was in `$ARGUMENTS`, do not ask: invoke
+`/phaser:archive <change id> --stun <plan file>` via the Skill tool now,
+passing the plan file path this command resolved. If `--stun` is absent and the
+user says yes, invoke `/phaser:archive <change id>` via the Skill tool; if not,
+leave the reminder as the final line.

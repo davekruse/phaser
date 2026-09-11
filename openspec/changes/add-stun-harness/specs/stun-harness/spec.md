@@ -22,26 +22,54 @@ not Complete.
 - **THEN** stun asks which plan/scope before doing anything
 
 ### Requirement: Status-driven dispatch
-On each iteration stun SHALL re-read the target phase's status line from
-disk and invoke the matching command via the Skill tool with `--stun`
-appended to its arguments: Planned → `/phaser:propose N --stun`, Proposed →
-`/phaser:scrutinize <id> --stun`, Scrutinized → `/phaser:apply <id> --stun`,
-Implemented → `/phaser:review <id> --stun`, Reviewed →
-`/phaser:archive <id> --stun`.
+Stun SHALL read the target phase's status line from disk once and invoke the
+single matching command via the Skill tool, passing `--stun` and the resolved
+plan file path: Planned → `/phaser:propose N --stun <plan file>`, Proposed →
+`/phaser:scrutinize <id> --stun <plan file>`, Scrutinized →
+`/phaser:apply <id> --stun <plan file>`, Implemented →
+`/phaser:review <id> --stun <plan file>`, Reviewed →
+`/phaser:archive <id> --stun <plan file>`. Stun SHALL NOT loop: a
+Skill-invoked command does not return control, so the run is carried from
+there by each command's `--stun` hand-off, and stun SHALL print nothing after
+dispatching.
 
 #### Scenario: Mid-phase start
 - **WHEN** stun is invoked while the phase is Scrutinized
-- **THEN** the first step it runs is `/phaser:apply <id> --stun`
+- **THEN** the only step stun itself dispatches is `/phaser:apply <id> --stun <plan file>`
 
 #### Scenario: Status read from disk
-- **WHEN** a step has just finished
-- **THEN** stun decides the next step from the plan file's current status line, not from conversation memory
+- **WHEN** any step is about to run
+- **THEN** the step to run is decided from the plan file's current status line, not from conversation memory
+
+#### Scenario: Scoped plan
+- **WHEN** the resolved plan file is `docs/phases/implementation-plan-ats.md` and the phase is Planned
+- **THEN** propose is dispatched with that path, and does not re-resolve or ask which scope
+
+### Requirement: Argument hygiene on dispatched commands
+Every command stun can dispatch (propose, scrutinize, apply, review,
+archive) SHALL, as the first act of its Step 1, note whether the literal
+token `--stun` is present in `$ARGUMENTS` and then remove it before parsing
+any scope token, phase number, change id or free-text argument. Each SHALL
+also accept an optional plan file path in `$ARGUMENTS`: when one is given and
+the file exists, it is used and plan-file resolution is skipped; otherwise
+resolution proceeds exactly as before. A command that chains SHALL pass the
+path on.
+
+#### Scenario: Flag does not leak into content
+- **WHEN** `/phaser:propose 7 --stun docs/phases/implementation-plan.md` runs
+- **THEN** neither `--stun` nor the path is treated as extra context or constraints for the proposal
+
+#### Scenario: Manual invocation unchanged
+- **WHEN** `/phaser:apply add-stun-harness` runs with no flag and no path
+- **THEN** the plan file is resolved exactly as it is today
 
 ### Requirement: Chaining under --stun
 Every command that has a hand-off (propose, scrutinize, apply, review)
 SHALL, when `--stun` is present in `$ARGUMENTS`, invoke its next step with
-`--stun` immediately instead of asking the user; without `--stun` it SHALL
-ask exactly as before.
+`--stun` and the plan file path immediately instead of asking the user;
+without `--stun` it SHALL ask exactly as before. Under either mode a command
+SHALL NOT invoke a next step if the user answered a decision in it with a
+request to stop.
 
 #### Scenario: Driven hand-off
 - **WHEN** `/phaser:scrutinize <id> --stun` finishes folding resolutions into the spec
@@ -52,25 +80,31 @@ ask exactly as before.
 - **THEN** it offers the next step and waits for the user's answer
 
 ### Requirement: Stop conditions
-Stun SHALL stop and report plainly when the phase reaches Complete
-(offering `/phaser:plan` for the next phase), when the user says stop at
-any decision, or when a step returns without advancing the status line.
+A stun run SHALL end plainly — by the running step declining to chain, since
+stun holds no control after its dispatch — when the phase reaches Complete
+(archive's closing line reports it and offers `/phaser:plan`), when the user
+answers any decision with a request to stop (the step reports the plan file,
+phase number and current status line and does not chain), or when a step
+finishes without advancing the status line (it states what did not advance
+and why, and does not chain).
 
 #### Scenario: Complete
 - **WHEN** archive sets the status to Complete
-- **THEN** stun reports the phase complete and offers `/phaser:plan`, and does not start another phase
+- **THEN** archive reports the phase complete and offers `/phaser:plan`, and no further phase is started
 
 #### Scenario: No progress
 - **WHEN** review returns a "no" verdict and leaves the status at Implemented
-- **THEN** stun stops, states that the status did not advance and why, and does not re-run apply on its own
+- **THEN** review states that the status did not advance and why, lists the must-fix items, and does not chain to apply
 
 #### Scenario: User stops
 - **WHEN** the user answers a decision with a request to stop
-- **THEN** stun stops, leaves the status line as the last completed step set it, and reports where the phase stands
+- **THEN** the running step leaves the status line as the last completed step set it, reports where the phase stands, and does not chain
 
 ### Requirement: Not model-invocable
 `/phaser:stun` SHALL carry `disable-model-invocation: true`; only the user
-starts a run.
+starts a run. `/phaser:plan` and `/phaser:aim` SHALL keep theirs; it SHALL be
+absent from propose, scrutinize, apply, review and archive so the chain can
+invoke them.
 
 #### Scenario: Model cannot start a run
 - **WHEN** a command's hand-off is reached with no `--stun` flag

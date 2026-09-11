@@ -1,12 +1,12 @@
 ---
-description: "Step 6 of 6 — Archive the completed OpenSpec change (/opsx:archive) and mark the phase complete in the plan file (invoke only when the user asks, or as the user-confirmed hand-off from /phaser:review)"
-argument-hint: "[optional: openspec change id, defaults to the phase's active change]"
+description: "Step 6 of 6 — Archive the completed OpenSpec change (/opsx:archive) and mark the phase complete in the plan file (invoke only when the user asks, as the user-confirmed hand-off from /phaser:review, or when driven by /phaser:stun)"
+argument-hint: "[optional: openspec change id, defaults to the phase's active change] [optional: plan file path]"
 model: sonnet
 ---
 
-> Invocation note: this command is only ever run by the user directly, or as a
-> user-confirmed hand-off from `/phaser:review`. Never invoke it on your own
-> initiative.
+> Invocation note: this command is only ever run by the user directly, as a
+> user-confirmed hand-off from `/phaser:review`, or when driven by
+> `/phaser:stun`. Never invoke it on your own initiative.
 
 # phaser:archive — Close out the phase
 
@@ -14,6 +14,12 @@ You are closing the loop on a phase of the phased iteration workflow.
 
 ## Step 1: Preflight
 
+- Note whether the literal token `--stun` is present in `$ARGUMENTS`, then
+  remove it from `$ARGUMENTS` before parsing anything else. It is a driver
+  flag, never a change id, scope or path.
+- If what remains of `$ARGUMENTS` carries a path to an existing
+  `implementation-plan*.md`, use that as the plan file and skip the
+  resolution bullets below.
 - Resolve the plan file: `docs/phases/implementation-plan.md`, or a scoped
   `docs/phases/implementation-plan-<scope>.md`. With several plan files, use
   the one whose status line references the change id in `$ARGUMENTS`; with

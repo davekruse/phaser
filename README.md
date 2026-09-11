@@ -9,32 +9,38 @@ Slop is a crisis. Stop it. With the right framework, you and AI can make softwar
 
 ## The workflow
 
-Each phase of application development moves through six commands. Fresh-eyes
-steps (3 and 5) are run right after `/clear` so scrutiny and review are cold
-reads of the artifacts on disk, not echoes of the conversation that produced
-them.
+Each phase of application development moves through six commands. The
+fresh-eyes steps (3 and 5) run their cold reads in isolated subagents, which
+cannot see the conversation that produced the spec — so scrutiny and review
+judge only the artifacts on disk, with nothing for you to remember to do first.
 
-| Step | Command            | Model                  | What it does |
-|------|--------------------|------------------------|--------------|
-| 1    | `/phaser:plan`      | Fable 5.1              | Interview -> append Phase N to the plan file |
-| 2    | `/phaser:propose`   | Fable 5.1              | `/opsx:propose` with ALL architectural decisions made up front |
-| 3    | `/phaser:scrutinize`| Opus (latest)          | (after `/clear`) question the spec from multiple angles, item by item |
-| 4    | `/phaser:apply`     | Sonnet + Opus advisor  | `/opsx:apply` — faithful execution; spec conflicts go to the `spec-advisor` subagent |
-| 5    | `/phaser:review`    | Opus (latest)          | (after `/clear`) senior review of the phase's changes, item by item |
-| 6    | `/phaser:archive`   | Sonnet (latest)        | `/opsx:archive` + mark phase Complete |
+| Step | Command            | Model                          | What it does |
+|------|--------------------|--------------------------------|--------------|
+| 1    | `/phaser:plan`      | Fable 5.1                      | Interview -> append Phase N to the plan file |
+|      | `/phaser:aim`       | Fable 5.1                      | Alias of `/phaser:plan` |
+| 2    | `/phaser:propose`   | Fable 5.1                      | `/opsx:propose` with ALL architectural decisions made up front |
+| 3    | `/phaser:scrutinize`| Opus (subagent)                | Question the spec from multiple angles, item by item |
+| 4    | `/phaser:apply`     | Sonnet subagent + Opus advisor | Faithful execution; spec conflicts go to the `spec-advisor` subagent |
+| 5    | `/phaser:review`    | Opus (subagent)                | Senior review of the phase's changes, item by item |
+| 6    | `/phaser:archive`   | Sonnet (latest)                | `/opsx:archive` + mark phase Complete |
+|      | `/phaser:stun`      | Fable 5.1                      | Drives a phase Planned -> Complete, pausing only for your decisions |
 
-Model pins use the `opus` / `sonnet` aliases, which resolve to the newest
-model of each tier — so when new Opus/Sonnet versions ship, those steps
-upgrade automatically without editing pins. `claude-fable-5-1` is an exact
-model id (no alias exists for the Fable tier), so steps 1–2 need a one-line
-pin edit when a newer Fable ships.
+`/phaser:stun` dispatches one step — whichever the plan file's status line
+calls for — and that step chains to the next itself, all the way to Complete.
+It stops when archive reports the phase complete, when a review comes back
+`no`, or when you answer any decision with a request to stop. Run it in
+accept-edits or auto mode so the apply step doesn't stall on every file write.
 
-Pinning caveat: a command's `model` frontmatter only holds until the first
-interactive pause; after you reply, the session model takes over. For the
-cost-sensitive apply step, run `/model sonnet` before `/phaser:apply` to hold
-Sonnet for the whole run (the scrutinize hand-off reminds you). Drift on the
-other steps is harmless — it only ever moves to your session's stronger
-model.
+Pins use the `opus` / `sonnet` aliases, which resolve to the newest model of
+each tier, so those steps upgrade automatically when new versions ship;
+`claude-fable-5-1` is an exact model id (no alias exists for the Fable tier),
+so the Fable steps need a one-line pin edit when a newer Fable ships. Where a
+pin actually binds: the subagent steps (scrutinize's critic, apply's
+implementer, review's reviewer, the advisor) run on their exact pins every
+time, because a subagent is dispatched with its model named, while the
+main-session steps — propose, archive, and every decision walk — run on the
+command's pin when you invoke the command yourself and on your session model
+when `/phaser:stun` drives them.
 
 ## How decisions reach you
 
@@ -53,6 +59,10 @@ escalated by the advisor during `apply` — follows the same shape:
 `plan` is the exception: it's an open-ended interview, so it asks in prose.
 `/phaser:plan` opens by asking what the phase should accomplish — including
 `/phaser:plan ats`, where `ats` is the plan scope, not the thing to build.
+
+Tip: start each phase in a fresh context. Only your decisions accumulate in
+the main session — the spec reads and diffs stay inside the subagents — but a
+clean context between phases keeps it that way.
 
 The plan file (`docs/phases/` in the app you're building) is the append-only
 memory of the project: one numbered section per phase, with a status line the
@@ -80,7 +90,7 @@ Prerequisite: OpenSpec's `/opsx` commands in the target project —
 /plugin install phaser@krusetech
 ```
 
-Restart Claude Code; the six `/phaser:*` commands should appear in the command
+Restart Claude Code; the `/phaser:*` commands should appear in the command
 menu.
 
 ## Update
@@ -105,13 +115,18 @@ phaser/
 │   └── marketplace.json          # "krusetech" catalog pointing at "./"
 ├── commands/
 │   ├── plan.md                   # /phaser:plan       (model: claude-fable-5-1)
+│   ├── aim.md                    # /phaser:aim        (alias of /phaser:plan)
 │   ├── propose.md                # /phaser:propose    (model: claude-fable-5-1)
 │   ├── scrutinize.md             # /phaser:scrutinize (model: opus)
 │   ├── apply.md                  # /phaser:apply      (model: sonnet)
 │   ├── review.md                 # /phaser:review     (model: opus)
-│   └── archive.md                # /phaser:archive    (model: sonnet)
+│   ├── archive.md                # /phaser:archive    (model: sonnet)
+│   └── stun.md                   # /phaser:stun       (model: claude-fable-5-1)
 ├── agents/
-│   └── spec-advisor.md           # Opus advisor consulted by /phaser:apply
+│   ├── spec-advisor.md           # Opus advisor consulted by /phaser:apply
+│   ├── scrutinizer.md            # Opus cold read for /phaser:scrutinize
+│   ├── implementer.md            # Sonnet executor for /phaser:apply
+│   └── reviewer.md               # Opus cold read for /phaser:review
 ├── reference/
 │   └── decision-protocol.md      # shared describe-then-select protocol
 └── README.md

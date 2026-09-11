@@ -24,13 +24,16 @@ artifacts and set the status line to `Scrutinized (<id>)`.
 ### Requirement: Apply runs in a subagent with an advisor relay
 `/phaser:apply` SHALL record the base commit (`git rev-parse HEAD`) unless
 the status line already carries one, then dispatch the `implementer`
-subagent (model sonnet) with only the change id and base SHA. The
-implementer SHALL work the task list via the `openspec` CLI and return
+subagent (model sonnet) with identifiers only (change id, plan file path,
+phase number, base SHA). The implementer SHALL work the task list via the
+`openspec` CLI and return
 `DONE` or `BLOCKED`. On `BLOCKED`, the main session SHALL dispatch
 `spec-advisor`; on `RESOLVED` it SHALL resume the same implementer with the
 resolution; on `ESCALATE` it SHALL put the decision to the user via the
 decision protocol and then resume the same implementer with the choice. On
-`DONE` it SHALL set the status line to `Implemented (<id>, base <sha>)`.
+`DONE` it SHALL apply every item the advisor listed under
+`SPEC UPDATES NEEDED` to the OpenSpec artifacts, then set the status line to
+`Implemented (<id>, base <sha>)`.
 
 #### Scenario: Blocked round-trip
 - **WHEN** the implementer returns BLOCKED on task 3
@@ -46,8 +49,9 @@ decision protocol and then resume the same implementer with the choice. On
 
 ### Requirement: Review runs its cold read in a subagent
 `/phaser:review` SHALL dispatch the `reviewer` subagent (model opus) with
-only the change id and base SHA. The reviewer SHALL diff from the base and
-return findings with severities and an overall verdict. The main session
+identifiers only (change id, plan file path, phase number, base SHA). The
+reviewer SHALL diff from the base and return findings with severities and an
+overall verdict. The main session
 SHALL walk findings one at a time with options Fix now / Defer / Accept
 as-is, SHALL apply "Fix now" edits itself, and SHALL set the status line to
 `Reviewed (<id>, base <sha>)` only for a yes or yes-with-deferred verdict,
@@ -70,6 +74,10 @@ from disk.
 #### Scenario: Prompt content
 - **WHEN** any of the three subagents is dispatched
 - **THEN** its prompt is under 20 lines and quotes no artifact or code
+
+#### Scenario: Namespaced agent type
+- **WHEN** a command dispatches a subagent
+- **THEN** `subagent_type` is the plugin-namespaced name (`phaser:scrutinizer`, `phaser:implementer`, `phaser:reviewer`, `phaser:spec-advisor`)
 
 ### Requirement: Single plan-file writer
 Only the main session SHALL edit files under `docs/phases/`; subagent

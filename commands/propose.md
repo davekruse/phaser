@@ -1,12 +1,12 @@
 ---
-description: "Step 2 of 6 — Use a frontier model to create an OpenSpec proposal (/opsx:propose) for the current phase, with ALL architectural decisions made up front so a smaller model can implement it (invoke only when the user asks, or as the user-confirmed hand-off from /phaser:plan)"
-argument-hint: "[optional: scope] [optional: phase number, defaults to latest Planned phase] [optional: extra context or constraints for the proposal]"
+description: "Step 2 of 6 — Use a frontier model to create an OpenSpec proposal (/opsx:propose) for the current phase, with ALL architectural decisions made up front so a smaller model can implement it (invoke only when the user asks, as the user-confirmed hand-off from /phaser:plan, or when driven by /phaser:stun)"
+argument-hint: "[optional: scope] [optional: phase number, defaults to latest Planned phase] [optional: plan file path] [optional: extra context or constraints for the proposal]"
 model: claude-fable-5-1
 ---
 
-> Invocation note: this command is only ever run by the user directly, or as a
-> user-confirmed hand-off from `/phaser:plan`. Never invoke it on your own
-> initiative.
+> Invocation note: this command is only ever run by the user directly, as a
+> user-confirmed hand-off from `/phaser:plan`, or when driven by
+> `/phaser:stun`. Never invoke it on your own initiative.
 
 # phaser:propose — Create the OpenSpec proposal for a phase
 
@@ -22,6 +22,13 @@ decision is made here, now, by you and the user.
   creates `openspec/` and the `/opsx:*` commands). If `/opsx:propose` is
   still not available afterwards, tell the user to restart Claude Code and
   re-run this command.
+- Note whether the literal token `--stun` is present in `$ARGUMENTS`, then
+  remove it from `$ARGUMENTS` before parsing anything else. It is a driver
+  flag — never a scope, phase number, path, or extra context for the proposal.
+- If what remains of `$ARGUMENTS` carries a path to an existing
+  `implementation-plan*.md`, use that as the plan file, remove it from
+  `$ARGUMENTS` too, and skip the resolution bullets below. Whatever is left
+  after the flag, the path and the phase number is the user's extra context.
 - Resolve the plan file: `implementation-plan-<scope>.md` if `$ARGUMENTS`
   starts with a scope token, otherwise the single
   `docs/phases/implementation-plan*.md`; if several plan files exist and no
@@ -99,14 +106,20 @@ Then review what openspec generated and edit the proposal artifacts so that:
 Update the phase's status line in the plan file to
 `**Status:** Proposed (<openspec change id>)`.
 
-End your final message with this reminder block, verbatim, as the very last
-thing (this hand-off crosses a context clear, so it cannot be automated):
+Then:
 
-> **Next step** (fresh context required):
-> 1. `/clear`
-> 2. `/phaser:scrutinize <change id>`
->
-> Scrutiny must be a cold read of the proposal, so don't skip the clear.
+> **Next step:** `/phaser:scrutinize <change id>` — interrogate the proposal
+> from multiple angles. Want me to kick it off now?
+
+If the user answered any decision in this step with a request to stop, do not
+chain under either mode: report where the phase stands (plan file, phase
+number, current status line) and end.
+
+Otherwise, if `--stun` was in `$ARGUMENTS`, do not ask: invoke
+`/phaser:scrutinize <change id> --stun <plan file>` via the Skill tool now,
+passing the plan file path this command resolved. If `--stun` is absent and the
+user says yes, invoke `/phaser:scrutinize <change id>` via the Skill tool; if
+not, leave the reminder as the final line.
 
 (Substitute the actual openspec change id so the next step is unambiguous
 even with multiple plan files.)

@@ -9,21 +9,29 @@ the user remembering to clear.
 ## What Changes
 
 - New `/phaser:stun [scope | change id]`: drives one phase from Planned to
-  Complete inside the current session, pausing only for user decisions.
+  Complete inside the current session, pausing only for user decisions. Stun
+  itself is a one-shot dispatcher — it resolves the phase, reads the status
+  line once and invokes the matching step; the `--stun` chain carries the run
+  from there (a loop in stun could never regain control, since a Skill-invoked
+  command does not return).
 - Scrutinize, apply and review move their heavy work into three new
   subagents (`agents/scrutinizer.md` opus, `agents/implementer.md` sonnet,
   `agents/reviewer.md` opus) with fixed return blocks. The commands become
   dispatch-and-walk: dispatch the agent, walk the user through its findings
   via the decision protocol, update the plan file, hand off.
 - Hand-offs chain silently when `--stun` is in `$ARGUMENTS`; otherwise they
-  ask, as today.
+  ask, as today. A stop request at any decision ends the run by not chaining.
+  Each dispatched command strips `--stun` from `$ARGUMENTS` before parsing its
+  own arguments, and accepts an optional resolved plan file path so no step
+  re-guesses the scope.
 - **BREAKING**: every `/clear` instruction and fresh-context check is
   removed; `disable-model-invocation` is dropped from scrutinize and review
   (kept on plan, aim, stun).
 - Apply's spec-advisor loop is relayed through the main session
   (subagents cannot spawn subagents).
-- New `/phaser:aim`: pointer command that invokes `/phaser:plan` with the
-  same arguments.
+- New `/phaser:aim`: pointer command that reads `commands/plan.md` and follows
+  it with the same arguments (plan cannot be Skill-invoked — it carries
+  `disable-model-invocation: true`).
 - Plugin version 0.5.0.
 
 ## Capabilities
@@ -42,7 +50,9 @@ the user remembering to clear.
 ## Impact
 
 - `commands/`: `stun.md`, `aim.md` new; `scrutinize.md`, `apply.md`,
-  `review.md` rewritten; `propose.md`, `archive.md` hand-off/guard edits.
+  `review.md` rewritten; `propose.md`, `archive.md` hand-off/guard edits. All
+  five dispatched commands gain a `--stun`-stripping bullet and an optional
+  plan-file-path argument.
 - `agents/`: `scrutinizer.md`, `implementer.md`, `reviewer.md` new;
   `spec-advisor.md` unchanged (verified: its RESOLVED/ESCALATE contract is
   what the relay consumes).
