@@ -115,7 +115,7 @@ verified passing. Run 6.1–6.4 before `/phaser:archive`.
 
 ## Phase 2: Harden the apply/review/archive loop
 
-**Status:** Reviewed (harden-apply-loop, base bca2feaf23e5970a37052085f5d2f1222b50b740)
+**Status:** Complete (2026-09-15, change harden-apply-loop)
 **Defined:** 2026-09-15
 **Review notes:** 2026-09-15; verdict: yes; deferred: none (5 findings, all fixed in review; propose.md guard reworded at the user's choice)
 
