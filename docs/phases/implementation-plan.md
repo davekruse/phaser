@@ -60,15 +60,15 @@ steps run in isolated subagents so `/clear` leaves the workflow entirely.
 - OpenSpec `/opsx:*` in the target project (propose, archive, verify)
 
 ### Acceptance criteria
-- [ ] On a throwaway fixture repo with OpenSpec initialized and one small
+- [x] On a throwaway fixture repo with OpenSpec initialized and one small
       Planned phase, `/phaser:stun` reaches Complete with every status
       transition recorded in the plan file.
-- [ ] One forced BLOCKED round-trip (ambiguous task) resolves via
+- [x] One forced BLOCKED round-trip (ambiguous task) resolves via
       spec-advisor and the implementer resumes without re-reading tasks.
-- [ ] `/phaser:scrutinize <id>` run manually in a warm session produces
+- [x] `/phaser:scrutinize <id>` run manually in a warm session produces
       findings from the subagent, not the conversation.
 - [x] `grep -rn "/clear" commands/ README.md` returns nothing.
-- [ ] `/phaser:aim` behaves identically to `/phaser:plan`.
+- [x] `/phaser:aim` behaves identically to `/phaser:plan`.
 
 ### Constraints / early decisions
 - Approach A from design discussion: stun is a thin driver over the
