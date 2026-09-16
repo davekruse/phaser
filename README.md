@@ -23,7 +23,7 @@ Or take it step by step.
 
 Slop is a crisis. Stop it. With the right framework, you and AI can make software a craft again. 
 
-This is a 'human in the loop' framework with lots of automation and lots of human product ownership. Take advantage of the harness while important decisions are brought for your review. 
+This is a 'human in the loop' framework with lots of automation and lots of human product ownership. The harness does what it's good at and comes to you for what you are good at: human expertise. 
 
 ## The workflow
 
