@@ -5,7 +5,7 @@ Append-only: each `/phaser:plan` adds a phase; later steps update status lines.
 
 ## Phase 1: /phaser:stun harness and /phaser:aim alias
 
-**Status:** Reviewed (add-stun-harness, base 70f7edaa4bf2d88569b1858a7a6472e066f64615)
+**Status:** Complete (2026-09-15, change add-stun-harness)
 **Defined:** 2026-09-10
 
 ### Goal
