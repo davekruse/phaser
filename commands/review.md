@@ -73,9 +73,11 @@ Take the overall verdict from the subagent's `VERDICT:` line.
 
 - `yes` or `yes-with-deferred` — update the phase status line to
   `**Status:** Reviewed (<change id>, base <sha>)` (carry the base forward so
-  a follow-up apply/review pass still covers the whole phase) and append a
-  short "Review notes" line to the phase section recording deferred items, if
-  any.
+  a follow-up apply/review pass still covers the whole phase) and insert or
+  replace, directly after the phase's `**Apply notes:**` line (or after
+  `**Defined:**` if there is none), a `**Review notes:**` line:
+  `**Review notes:** <YYYY-MM-DD>; verdict: <yes|yes-with-deferred>; deferred:
+  <list|none>`.
 - `no` — leave the status line at `Implemented (<change id>, base <sha>)`.
   State plainly that the status did not advance and why, and list what must
   happen (usually another `/phaser:apply` pass for the must-fix items). There

@@ -37,13 +37,17 @@ ask the user anything — return findings and stop.
 Conduct a senior-developer-level review and build a written findings list.
 
 **Axis 1 — Fulfillment of the phase and spec**
-- First run `/opsx:verify <change id>` (via the Skill tool) if the project's
-  OpenSpec provides it; summarise its completeness/correctness/coherence
-  report in the VERIFY line, or report "not available" if it is absent. Its
-  report is input, not verdict — confirm each claim against the diff yourself.
+- First run `openspec validate <id> --type change` via Bash; summarise its
+  output on the `VERIFY` line as `openspec validate — valid` or
+  `openspec validate — <n> issue(s): <first line of each>`. Report "not
+  available" only when the `openspec` binary itself is absent. Its report is
+  input, not verdict — confirm each claim against the diff yourself.
 - Is every task in the spec actually implemented, and implemented as
   specified (paths, names, contracts, behaviors)?
 - Are the phase's acceptance criteria met? Test each one against the diff.
+- An unticked acceptance checkbox in the plan file is never a finding —
+  archive ticks them at close-out. An unmet criterion is a finding about the
+  code.
 - Any silent deviations from the spec? Any scope creep beyond it?
 - If the phase lists "Key code touchpoints" with invariants (e.g. "X requires
   no changes"), confirm the diff honors them — invariant-protected areas must
@@ -64,10 +68,14 @@ style opinions that a linter/formatter owns.
 
 ## Return
 
+When a finding is that an artifact states something false about the codebase,
+the remedy marked recommended is the one that corrects the artifact — never
+"leave as-is".
+
 End your reply with exactly this block:
 
 ```
-VERIFY: <one-line summary of /opsx:verify or `openspec` output, or "not available">
+VERIFY: openspec validate — valid | <n> issue(s): <summary> | not available
 FINDINGS: <count>
 1. [blocker|should-fix|nit] <title> — <file:line>
    Impact: <one line>

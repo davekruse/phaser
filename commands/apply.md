@@ -88,9 +88,17 @@ architect.
 
 Report the implementer's `TASKS` count and every line under `DEVIATIONS`.
 
+Insert or replace, directly after the target phase's `**Defined:**` line, an
+`**Apply notes:**` line: `**Apply notes:** <YYYY-MM-DD>; deviations: none` if
+`DEVIATIONS` was empty, or `**Apply notes:** <YYYY-MM-DD>; deviations: <n> —
+<line>; <line>` listing each `DEVIATIONS` line otherwise. If the phase
+section already carries an `**Apply notes:**` line, replace it rather than
+adding a second.
+
 If any escalation happened in Step 3, apply every item the advisor listed
 under `SPEC UPDATES NEEDED` to the OpenSpec artifacts now, so the spec records
-the decision the user made — `/phaser:review` judges the code against it.
+the decision the user made; `/phaser:review` judges the code against it.
+Attribute that decision to the user, never to yourself.
 
 Update the phase status line in the plan file to
 `**Status:** Implemented (<change id>, base <sha>)`.

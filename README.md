@@ -40,7 +40,7 @@ judge only the artifacts on disk, with nothing for you to remember to do first.
 | 3    | `/phaser:scrutinize`| Opus (subagent)                | Question the spec from multiple angles, item by item |
 | 4    | `/phaser:apply`     | Sonnet subagent + Opus advisor | Faithful execution; spec conflicts go to the `spec-advisor` subagent |
 | 5    | `/phaser:review`    | Opus (subagent)                | Senior review of the phase's changes, item by item |
-| 6    | `/phaser:archive`   | Sonnet (latest)                | `/opsx:archive` + mark phase Complete |
+| 6    | `/phaser:archive`   | Sonnet (latest)                | `/opsx:archive` + tick acceptance criteria + mark phase Complete |
 |      | `/phaser:stun`      | Fable 5.1                      | Drives a phase Planned -> Complete, pausing only for your decisions |
 
 `/phaser:stun` dispatches one step — whichever the plan file's status line
@@ -74,9 +74,11 @@ escalated by the advisor during `apply` — follows the same shape:
 3. One item at a time — no wall of findings, no bare free-text questions. The
    built-in "Other" is always there when none of the options fit.
 
-`plan` is the exception: it's an open-ended interview, so it asks in prose.
-`/phaser:plan` opens by asking what the phase should accomplish — including
-`/phaser:plan ats`, where `ats` is the plan scope, not the thing to build.
+`plan` opens with one prose question — what should this phase accomplish?
+(including `/phaser:plan ats`, where `ats` is the plan scope, not the thing
+to build) — and follows the protocol from there, with multi-select pickers
+for lists like requirements and out-of-scope items. When the phase is saved
+it names `/phaser:stun` as the next step.
 
 Tip: start each phase in a fresh context. Only your decisions accumulate in
 the main session — the spec reads and diffs stay inside the subagents — but a
@@ -87,6 +89,10 @@ memory of the project: one numbered section per phase, with a status line the
 commands keep updated (Planned -> Proposed -> Scrutinized -> Implemented ->
 Reviewed -> Complete). `Implemented` also records the base commit SHA so
 `review` can diff the whole phase, including anything committed along the way.
+`apply` leaves an `Apply notes` line recording every deviation from the task
+text and its source; `review` leaves a `Review notes` line with its verdict
+and deferred items; `archive` re-runs command-shaped acceptance criteria,
+asks you about the rest one at a time, and names any left unticked.
 
 Plans can be **scoped**: `/phaser:plan ats 10` records Phase 10 in
 `docs/phases/implementation-plan-ats.md` instead of the default

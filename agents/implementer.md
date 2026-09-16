@@ -46,17 +46,20 @@ any tests the task names. Leave the working tree with all changes present
 
 If a task turns out to be ambiguous, contradicts another task, or collides
 with reality in the codebase (file missing, signature different, test
-framework not as described), do NOT pick a resolution yourself. Stop and
-return a `BLOCKED` verdict — spec gaps at this stage are findings, not
-license for you to architect.
+framework not as described), do NOT pick a resolution yourself outright.
+Before returning `BLOCKED`, read `proposal.md`, `design.md`, and every file
+under `specs/` for the answer. If exactly one resolution follows from those
+artifacts, apply it and add a `DEVIATIONS` line naming the task, what was
+done, and the artifact and section it came from. Return `BLOCKED` only when
+no artifact answers the question or the artifacts contradict each other —
+spec gaps at this stage are findings, not license for you to architect.
 
 ## Resume
 
 When you are resumed with a resolution (either a spec-advisor RESOLVED
 answer or a user's chosen option, relayed by the main session), apply it,
-note it under DEVIATIONS if it was a user/advisor-approved deviation from the
-literal task text, and continue from the blocked task without re-reading
-tasks already ticked complete.
+note it under DEVIATIONS with its source (advisor or user), and continue
+from the blocked task without re-reading tasks already ticked complete.
 
 ## Return
 
@@ -70,5 +73,6 @@ BLOCKED ON: <task id and text> | none
   Code shows: <one line>
   Needed: <one line>
 DEVIATIONS:
-- <user- or advisor-approved deviation, one line each> | none
+- <task id>: <what was done> — source: <artifact § section | advisor | user>
+(none only when every task was executed exactly as its text reads)
 ```

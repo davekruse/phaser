@@ -52,8 +52,14 @@ question, e.g. "Phase 9 finished X; what's next?"). With a seed topic, open by
 asking about it. Do not reach Step 3 without at least one round of answers
 from the user.
 
-Interview the user conversationally (a few questions at a time, not a wall of
-questions) until you can clearly articulate:
+After the opening answer, whenever you can propose candidate answers — for
+goal wording, requirements, out-of-scope items, dependencies, acceptance
+criteria, or splitting a too-large phase — present them through the
+**decision protocol** in `${CLAUDE_PLUGIN_ROOT}/reference/decision-protocol.md`
+(read it first): one AskUserQuestion per message, using `multiSelect` for
+list items such as requirements or out-of-scope items. Ask in prose only when
+you cannot enumerate candidates. Work one question at a time until you can
+clearly articulate:
 
 - **Goal** — the outcome of this phase in one or two sentences
 - **Requirements** — concrete, testable requirements
@@ -77,8 +83,11 @@ increment.
 
 ## Step 3: Record the phase
 
-Present a draft of the phase section to the user for confirmation, then append
-it to the plan file:
+Present a draft of the phase section to the user in text, then confirm it
+with a single-select picker via the AskUserQuestion tool: "Append as drafted
+(Recommended)" or "Edit first". On "Edit first", take the user's changes,
+re-present the revised draft, and ask again. On "Append as drafted", append
+it to the plan file as shown:
 
 ```markdown
 ## Phase N: <short title>
@@ -117,11 +126,7 @@ Never rewrite or renumber earlier phases; the file is an append-only history
 
 ## Step 4: Hand off
 
-Confirm the phase is saved, then offer to continue immediately:
+Confirm the phase is saved, then end with:
 
-> **Next step:** `/phaser:propose` — turn Phase N into an OpenSpec change
-> proposal. Want me to kick that off now?
-
-If the user says yes, invoke the `/phaser:propose` command via the Skill
-tool. If not, leave the reminder above as the final line so it is easy to find
-later.
+> **Next step:** `/phaser:stun` — drive Phase N from Planned to Complete,
+> pausing only for your decisions.

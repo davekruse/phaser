@@ -42,16 +42,35 @@ Invoke the `/opsx:archive` command (via the Skill tool) for the change
 so its spec deltas are merged into the main specs and the change is moved to
 the archive.
 
-## Step 3: Record completion
+## Step 3: Tick acceptance criteria
+
+Walk every unticked `- [ ]` item under the phase's `### Acceptance criteria`:
+
+- If it contains a backticked shell command and a stated expected result, run
+  the command from the repo root and tick it (`- [x]`) if the output matches
+  the stated result. Skip and report any such command that would write
+  (anything beyond a read-only check like a grep or a version read) rather
+  than running it.
+- Otherwise, put it to the user one at a time via the **decision protocol**
+  in `${CLAUDE_PLUGIN_ROOT}/reference/decision-protocol.md` (read it first),
+  quoting the criterion's text, with options "Verified — tick it
+  (Recommended)" and "Not verified — leave it". Tick it only on "Verified".
+  One criterion per question — never bundle several into one picker.
+
+Collect the text of every criterion left unticked (failed command, declined,
+or otherwise not verified).
+
+## Step 4: Record completion
 
 In the plan file, update the phase's status line to:
 
 `**Status:** Complete (<YYYY-MM-DD>, change <change id>)`
 
-## Step 4: Hand off
+## Step 5: Hand off
 
 Confirm completion and give a one-paragraph summary of what this phase
-delivered. End with:
+delivered. Then list `Unverified criteria: <each unticked criterion, or
+none>`. End with:
 
 > **Phase N complete.** The cycle restarts with `/phaser:plan` whenever you're
 > ready to define the next phase.

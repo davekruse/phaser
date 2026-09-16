@@ -71,6 +71,10 @@ Discard nitpicks that would not change what gets built.
 
 ## Return
 
+When a finding is that an artifact states something false about the codebase,
+the option marked recommended is the one that corrects the artifact — never
+"leave as-is".
+
 End your reply with exactly this block:
 
 ```

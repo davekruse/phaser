@@ -112,3 +112,124 @@ verified passing. Run 6.1–6.4 before `/phaser:archive`.
 ### Companion docs
 - `README.md` — workflow table (stun row, aim row), model-pin paragraph,
   "after /clear" language, Layout tree
+
+## Phase 2: Harden the apply/review/archive loop
+
+**Status:** Reviewed (harden-apply-loop, base bca2feaf23e5970a37052085f5d2f1222b50b740)
+**Defined:** 2026-09-15
+**Review notes:** 2026-09-15; verdict: yes; deferred: none (5 findings, all fixed in review; propose.md guard reworded at the user's choice)
+
+### Goal
+Close the six findings from the Phase 1 fixture run so that every decision
+made during a phase is recorded where the next step will see it, every
+acceptance criterion has an owner, and no step references a tool that does
+not exist. Also bring the plan interview in line with the decision protocol the
+other steps use. Hardening only: no new commands, agents, or capabilities.
+
+### Requirements
+- The implementer may resolve a task-level ambiguity from any artifact in
+  the change (proposal, design, spec deltas). It blocks only when no
+  artifact answers the question. Its agent definition states this contract
+  explicitly.
+- Any resolution the implementer makes on its own, and any resolution
+  relayed to it from the advisor or the user, appears as a line under
+  `DEVIATIONS` in its return block. "none" is only valid when every task was
+  executed exactly as its text reads.
+- The apply command reports every `DEVIATIONS` line to the user and records
+  them in the plan file's phase section, so review and archive can see them.
+- The archive step re-runs command-shaped acceptance criteria and ticks
+  them on pass, asks the user about every other unticked criterion one at a
+  time, and names any left unticked. (Revised during scrutiny: was "ticks
+  what it can verify, trusting the review verdict for the rest".)
+- The review step records its verdict and deferred items as a fixed
+  `**Review notes:**` line; apply's `**Apply notes:**` line has the same
+  shape. Both sit after `**Defined:**` (added during scrutiny).
+- The reviewer no longer raises an unticked acceptance checkbox as a
+  finding.
+- The reviewer's spec-verification step invokes a tool that exists in
+  OpenSpec 1.13 (`openspec validate`), and its `VERIFY` line summarises that
+  tool's actual output.
+- When a scrutinize or review finding is that a document makes a false
+  claim about the codebase, the recommended option corrects the document.
+- When a step reports a decision that the user made, it attributes the
+  decision to the user, not to itself.
+- `/phaser:plan` (and therefore `/phaser:aim`) interviews the way the other
+  steps do: one question at a time, as selectable multiple-choice options
+  via the decision protocol wherever the answer space can be enumerated,
+  falling back to prose only for genuinely open-ended questions such as
+  the opening "what should this phase accomplish?".
+- When plan/aim finishes recording the phase, its hand-off names
+  `/phaser:stun` as the next step, not `/phaser:propose`.
+
+### Out of scope
+- New commands, agents, subagent models, or plan-file formats.
+- Changes to `/phaser:stun` or `/phaser:propose`.
+- Changes to `/phaser:plan` beyond its question style and hand-off line.
+- Changing the reviewer's severity scheme or the scrutinizer's angle list.
+- Re-running the full Phase 1 verification suite; only the two tests below.
+
+### Dependencies
+- Phase 1 (the harness, agents, and return blocks this phase amends).
+- OpenSpec 1.13 CLI (`openspec validate <id> --type change`; validate has no
+  `--change` flag — corrected during propose).
+- The fixture repo at `../temp` with Phase 4 (`version-script`) left at
+  Scrutinized.
+
+### Acceptance criteria
+- [ ] Fixture test A (user-run). In `../temp`, install 0.5.1. Phase 4
+      (`version-script`) is at Scrutinized: edit its `tasks.md` task 1.1 to
+      name `bin/version` or `scripts/version` without choosing, leave
+      design.md D1 at `bin/version`, run `/phaser:apply version-script`.
+      Pass when the implementer returns DONE without BLOCKED, its
+      `DEVIATIONS` names task 1.1, `bin/version` and design D1, and Phase
+      4's section gains an `**Apply notes:**` line carrying it.
+- [ ] Fixture test B (user-run). Append a trivial Phase 5 to the fixture
+      plan and run `/phaser:stun` to Complete. Pass when the reviewer's
+      `VERIFY` line quotes `openspec validate` output, the review raises no
+      checkbox finding, a `**Review notes:**` line appears after Apply
+      notes, archive asks about Phase 5's behavioral criterion and ticks it
+      on "Verified", and the closing summary reads `Unverified criteria:
+      none`.
+- [ ] `grep -rn "opsx:verify" agents/ commands/` returns nothing.
+- [ ] Fixture test C (user-run). Run `/phaser:aim` in the fixture. Pass
+      when the opening message is a prose question, every later question
+      with enumerable answers arrives as an AskUserQuestion, one per
+      message, the closing line names `/phaser:stun`, and no
+      `/phaser:propose` invocation follows.
+- [ ] `.claude-plugin/plugin.json` reads `0.5.1`.
+
+### Constraints / early decisions
+- Blocking contract: lenient (resolve from any artifact, block only on
+  spec-wide silence). Decided 2026-09-15.
+- Checkbox owner: archive, not review. Decided 2026-09-15.
+- Patch release, not minor.
+- Plan cannot Skill-invoke `/phaser:stun` (stun carries
+  `disable-model-invocation: true`), so the hand-off is a suggestion the
+  user runs, not an automatic chain.
+
+### Key code touchpoints
+- `agents/implementer.md`: Block and Return sections carry the contract
+  and the DEVIATIONS rule.
+- `agents/reviewer.md`: Axis 1 verify step; findings rules.
+- `agents/scrutinizer.md`, `agents/reviewer.md`: option-ordering guidance
+  for false-claim findings.
+- `commands/apply.md` Step 4: DEVIATIONS reporting and plan-file recording.
+- `commands/archive.md`: new checkbox-ticking step before status update.
+- `commands/scrutinize.md`: no change; confirm. `commands/review.md`: Step
+  4 emits the Review notes line (added during scrutiny).
+- `reference/decision-protocol.md`: attribution wording, if that is where
+  it belongs.
+- `commands/plan.md` Steps 2 and 4: interview style and hand-off.
+  `commands/aim.md` needs no change; confirm.
+
+### Companion docs
+- `README.md`: "How decisions reach you" section, if the DEVIATIONS record
+  or the checkbox ownership changes what the user sees, and its "`plan` is
+  the exception" sentence, which stops being true.
+
+### Scrutiny notes (2026-09-15)
+Five findings, all resolved by the user: archive asks per behavioral
+criterion instead of ticking on the review verdict; review emits a fixed
+`**Review notes:**` line so archive has a verdict to read; task 7.3's grep
+is scoped to Step 4; the user-run fixture tests moved from tasks.md into the
+acceptance criteria above; Apply/Review notes anchor after `**Defined:**`.
