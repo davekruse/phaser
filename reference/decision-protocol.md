@@ -20,3 +20,8 @@ bare prose and never bundle several decisions into one message:
    notes and OpenSpec artifacts, say what the user chose — never "I resolved"
    or "I decided" for a choice that went through this protocol. First person
    is for choices you made without asking.
+5. **Do not ask about obvious choices.** When the option you would recommend
+   has no con, your confidence is high, and the action is a single
+   reversible edit, act and report it (first person — it is your call, not
+   the user's). Only steps whose command text adopts this clause use it;
+   today that is `/phaser:review`, driven by the reviewer's `[auto]` tag.

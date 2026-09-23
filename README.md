@@ -72,6 +72,10 @@ escalated by the advisor during `apply` — follows the same shape:
 3. One item at a time — no wall of findings, no bare free-text questions. The
    built-in "Other" is always there when none of the options fit.
 
+`review` goes one step further: findings the reviewer marks as having no
+downside are applied before you are asked anything, and named as applied in
+the summary — pickers are reserved for real trade-offs.
+
 `plan` opens with one prose question — what should this phase accomplish?
 (including `/phaser:plan ats`, where `ats` is the plan scope, not the thing
 to build) — and follows the protocol from there, with multi-select pickers

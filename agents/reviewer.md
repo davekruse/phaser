@@ -79,12 +79,19 @@ When a finding is that an artifact states something false about the codebase,
 the remedy marked recommended is the one that corrects the artifact — never
 "leave as-is".
 
+Tag a finding `[auto]` directly after its severity tag only when all five
+hold: the severity is nit or should-fix; the recommended remedy's con reads
+`none`; the fix is a single localized edit with one defensible form; you are
+highly confident; the finding does not name a criterion you marked
+`not-met`. A blocker never carries `[auto]`. When unsure, withhold the tag —
+a withheld tag costs one picker, a wrong tag costs an unreviewed edit.
+
 End your reply with exactly this block:
 
 ```
 VERIFY: openspec validate — valid | <n> issue(s): <summary> | not available
 FINDINGS: <count>
-1. [blocker|should-fix|nit] <title> — <file:line>
+1. [blocker|should-fix|nit] [auto]? <title> — <file:line>
    Impact: <one line>
    Remedies:
    - <label> — pro: <one line> / con: <one line>   (recommended)

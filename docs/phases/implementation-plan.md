@@ -391,3 +391,81 @@ and Layout task were corrected for the alias-only outcome (three Fable
 comments, not four); fixture test E reworded to what a transcript can
 show; the no-`claude-fable-5-1` requirement scoped to commands/, agents/,
 README.
+
+## Phase 5: Review auto-applies obvious fixes
+
+**Status:** Reviewed (review-auto-apply, base c1e782f8608f406fe4c018debf8a2b3feea557b5)
+**Defined:** 2026-09-22
+**Apply notes:** 2026-09-22; deviations: none
+**Review notes:** 2026-09-22; verdict: yes; deferred: none; criteria: met 1,2,4; unverifiable 3; auto-applied: 1
+
+### Goal
+`/phaser:review` applies a finding's recommended remedy without asking
+when the reviewer marks it `[auto]`: severity nit or should-fix, the
+recommended remedy has no con, confidence is high, and the edit is a
+single obvious change. The user sees every auto-applied fix in the
+summary but is asked only about findings that carry a real trade-off.
+
+### Requirements
+- The reviewer's findings block gains an optional `[auto]` tag after the
+  severity tag, e.g. `1. [nit] [auto] <title>`. The reviewer sets it only
+  when all hold: severity is nit or should-fix; the recommended remedy's
+  con reads `none`; the fix is one localized edit with one defensible
+  form; the reviewer is highly confident; the finding does not name a
+  `not-met` criterion (added during scrutiny). Blockers are never
+  `[auto]`.
+- Review Step 3: before the walk, apply every `[auto]` finding's
+  recommended remedy, then present the numbered summary with auto-applied
+  findings marked "applied" and walk only the rest via the decision
+  protocol. A finding with no remaining pickers means no picker at all.
+  An `[auto]` remedy that cannot be applied as written is walked like any
+  untagged finding (added during scrutiny).
+- The Review notes line records the count: `auto-applied: <n|none>`.
+- The decision protocol gains a general clause: a step may act without
+  asking when the recommended option has no con and confidence is high,
+  provided the action is reported. Scrutinize does not adopt it in this
+  phase.
+
+### Out of scope
+- Auto-resolving scrutinize findings or apply escalations.
+- Auto-applying blockers.
+- Changing severity definitions.
+
+### Dependencies
+- Phase 3 (reviewer block shape, Review notes line).
+
+### Acceptance criteria
+- [ ] `grep -c "\[auto\]" agents/reviewer.md` returns 2 or more.
+- [ ] `grep -c "auto-applied" commands/review.md` returns 1 or more.
+- [ ] Fixture test F (user-run). Run one phase through `/phaser:stun` in
+      `../temp` on 0.5.4 whose review yields at least one `[auto]`
+      finding. Pass when that finding is applied with no picker, appears
+      as "applied" in the summary, and the Review notes line carries
+      `auto-applied: <n>`.
+- [ ] `.claude-plugin/plugin.json` reads `0.5.4`.
+
+### Constraints / early decisions
+- Signal is a reviewer-set `[auto]` tag, not main's judgment (decided
+  2026-09-22).
+- Severity cap: nit and should-fix only (decided 2026-09-22).
+- Patch release.
+
+### Key code touchpoints
+- `agents/reviewer.md`: Return section and block placeholder.
+- `commands/review.md` Step 3 and Step 4 (Review notes line).
+- `reference/decision-protocol.md`: new clause.
+- `openspec/specs/subagent-steps/spec.md`: MODIFIED delta;
+  `openspec/specs/decision-protocol/spec.md`: ADDED requirement
+  (corrected during scrutiny).
+- `commands/scrutinize.md`, `agents/scrutinizer.md`: no change; confirm.
+
+### Companion docs
+- `README.md`: "How decisions reach you" section.
+
+### Scrutiny notes (2026-09-22)
+Five findings, resolved by the user: an `[auto]` remedy that doesn't apply
+cleanly falls back to a picker; a finding naming a `not-met` criterion is
+never `[auto]`, so a `no` verdict only flips with a user decision (re-judge
+keeps "Fix now" only); task 2.3 now names the rewrap point and the count's
+source; the README sentence is a new paragraph and the Review notes summary
+line is left alone; fixture test F left as written.

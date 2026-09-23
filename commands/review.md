@@ -55,8 +55,15 @@ Follow your agent definition and return your block.
 
 If the returned block reads `FINDINGS: 0`, skip to Step 4.
 
-Otherwise present the subagent's numbered summary of all findings, with their
-severities, first. Then walk through them ONE at a time:
+Otherwise, first apply the recommended remedy of every finding tagged `[auto]`,
+in numbered order, without asking — these are the reviewer's own no-downside
+calls, and you report them in first person. Then present the
+numbered summary of all findings with their severities, marking each
+auto-applied one "applied". If an `[auto]` remedy cannot be applied as
+written — the file no longer matches, or the remedy is ambiguous or looks
+wrong — do not improvise: leave it unapplied, mark it "not auto-applied" in
+the summary, and walk it like any untagged finding. Then walk the remaining
+findings ONE at a time; if none remain, skip to Step 4:
 
 - Explain the finding, show the relevant code, and explain the impact.
 - Put it to the user via the **decision protocol** in
@@ -84,9 +91,10 @@ which criteria were re-judged.
   replace, directly after the phase's `**Apply notes:**` line (or after
   `**Defined:**` if there is none), a `**Review notes:**` line:
   `**Review notes:** <YYYY-MM-DD>; verdict: <yes|yes-with-deferred>; deferred:
-  <list|none>; criteria: met <nums|none>; unverifiable <nums|none>`. Copy the
-  numbers from the subagent's `CRITERIA:` section, adjusted by the re-judge
-  above.
+  <list|none>; criteria: met <nums|none>;
+  unverifiable <nums|none>; auto-applied: <n|none>`. Copy the numbers from
+  the subagent's `CRITERIA:` section, adjusted by the re-judge above;
+  `auto-applied` is the count of `[auto]` findings you applied in Step 3.
 - `no` — leave the status line at `Implemented (<change id>, base <sha>)`.
   State plainly that the status did not advance and why, and list what must
   happen (usually another `/phaser:apply` pass for the must-fix items). There
