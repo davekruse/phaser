@@ -92,7 +92,8 @@ Reviewed -> Complete). `Implemented` also records the base commit SHA so
 `apply` leaves an `Apply notes` line recording every deviation from the task
 text and its source; `review` leaves a `Review notes` line with its verdict
 and deferred items; `archive` re-runs command-shaped acceptance criteria,
-asks you about the rest one at a time, and names any left unticked.
+ticks the ones the reviewer verified, asks you only about the ones it could
+not, and names any left unticked.
 
 Plans can be **scoped**: `/phaser:plan ats 10` records Phase 10 in
 `docs/phases/implementation-plan-ats.md` instead of the default

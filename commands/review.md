@@ -71,13 +71,22 @@ severities, first. Then walk through them ONE at a time:
 
 Take the overall verdict from the subagent's `VERDICT:` line.
 
+**Re-judge after fixes.** If the block marks any criterion `not-met`, revisit
+each after Step 3: re-run a command-shaped one; for a behavioral one, treat
+it as `met` only if a "Fix now" edit in Step 3 addressed the finding that
+named it. If no `not-met` criterion remains, the verdict becomes `yes` (or
+`yes-with-deferred` if anything was deferred); otherwise it stays `no`. Say
+which criteria were re-judged.
+
 - `yes` or `yes-with-deferred` — update the phase status line to
   `**Status:** Reviewed (<change id>, base <sha>)` (carry the base forward so
   a follow-up apply/review pass still covers the whole phase) and insert or
   replace, directly after the phase's `**Apply notes:**` line (or after
   `**Defined:**` if there is none), a `**Review notes:**` line:
   `**Review notes:** <YYYY-MM-DD>; verdict: <yes|yes-with-deferred>; deferred:
-  <list|none>`.
+  <list|none>; criteria: met <nums|none>; unverifiable <nums|none>`. Copy the
+  numbers from the subagent's `CRITERIA:` section, adjusted by the re-judge
+  above.
 - `no` — leave the status line at `Implemented (<change id>, base <sha>)`.
   State plainly that the status did not advance and why, and list what must
   happen (usually another `/phaser:apply` pass for the must-fix items). There

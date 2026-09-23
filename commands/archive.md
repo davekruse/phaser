@@ -51,14 +51,20 @@ Walk every unticked `- [ ]` item under the phase's `### Acceptance criteria`:
   the stated result. Skip and report any such command that would write
   (anything beyond a read-only check like a grep or a version read) rather
   than running it.
-- Otherwise, put it to the user one at a time via the **decision protocol**
-  in `${CLAUDE_PLUGIN_ROOT}/reference/decision-protocol.md` (read it first),
+- Otherwise read the `criteria:` field of the phase's `**Review notes:**`
+  line and find this criterion's number, counting every item under
+  `### Acceptance criteria` in order, ticked ones included (first is 1).
+  Listed under `met`: tick it without asking. Listed under `unverifiable`,
+  listed nowhere, or the Review notes line is absent or has no `criteria:`
+  field: put it to the user via the **decision protocol** in
+  `${CLAUDE_PLUGIN_ROOT}/reference/decision-protocol.md` (read it first),
   quoting the criterion's text, with options "Verified — tick it
-  (Recommended)" and "Not verified — leave it". Tick it only on "Verified".
-  One criterion per question — never bundle several into one picker.
+  (Recommended)" and "Not verified — leave it"; tick only on "Verified"; one
+  criterion per question.
 
 Collect the text of every criterion left unticked (failed command, declined,
-or otherwise not verified).
+or otherwise not verified). Also collect the numbers of every criterion
+ticked from `met`.
 
 ## Step 4: Record completion
 
@@ -70,7 +76,7 @@ In the plan file, update the phase's status line to:
 
 Confirm completion and give a one-paragraph summary of what this phase
 delivered. Then list `Unverified criteria: <each unticked criterion, or
-none>`. End with:
+none>`. Then list `Ticked on review evidence: <numbers, or none>`. End with:
 
 > **Phase N complete.** The cycle restarts with `/phaser:plan` whenever you're
 > ready to define the next phase.

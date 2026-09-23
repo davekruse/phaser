@@ -44,7 +44,14 @@ Conduct a senior-developer-level review and build a written findings list.
   input, not verdict — confirm each claim against the diff yourself.
 - Is every task in the spec actually implemented, and implemented as
   specified (paths, names, contracts, behaviors)?
-- Are the phase's acceptance criteria met? Test each one against the diff.
+- Judge every acceptance criterion of the phase against the diff and
+  read-only checks, numbered in plan-file order counting every item under
+  `### Acceptance criteria`, ticked ones included, so numbering is stable;
+  report each in the `CRITERIA:` section as `met`, `not-met`, or
+  `unverifiable` (its truth needs a run the diff cannot show: a fixture, a
+  manual session, anything user-run) with a one-line reason. A `not-met`
+  criterion is a finding about the code (the finding names the criterion's
+  number) and forces a `no` verdict.
 - An unticked acceptance checkbox in the plan file is never a finding —
   archive ticks them at close-out. An unmet criterion is a finding about the
   code.
@@ -82,6 +89,9 @@ FINDINGS: <count>
    Remedies:
    - <label> — pro: <one line> / con: <one line>   (recommended)
    - <label> — pro: … / con: …
+2. …
+CRITERIA:
+1. met | not-met | unverifiable — <one-line reason>
 2. …
 VERDICT: yes | yes-with-deferred | no
 ```

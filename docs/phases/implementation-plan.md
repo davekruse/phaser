@@ -187,8 +187,8 @@ other steps use. Hardening only: no new commands, agents, or capabilities.
       plan and run `/phaser:stun` to Complete. Pass when the reviewer's
       `VERIFY` line quotes `openspec validate` output, the review raises no
       checkbox finding, a `**Review notes:**` line appears after Apply
-      notes, archive asks about Phase 5's behavioral criterion and ticks it
-      on "Verified", and the closing summary reads `Unverified criteria:
+      notes, archive ticks Phase 5's behavioral criterion silently if the
+      reviewer marked it met, asks only if marked unverifiable, and the closing summary reads `Unverified criteria:
       none`.
 - [ ] `grep -rn "opsx:verify" agents/ commands/` returns nothing.
 - [ ] Fixture test C (user-run). Run `/phaser:aim` in the fixture. Pass
@@ -233,3 +233,87 @@ criterion instead of ticking on the review verdict; review emits a fixed
 `**Review notes:**` line so archive has a verdict to read; task 7.3's grep
 is scoped to Step 4; the user-run fixture tests moved from tasks.md into the
 acceptance criteria above; Apply/Review notes anchor after `**Defined:**`.
+
+## Phase 3: Archive ticks on evidence, asks only when there is none
+
+**Status:** Reviewed (archive-ticks-on-evidence, base a007aa609b320a71b7042b4b92f865a7358fc2ea)
+**Defined:** 2026-09-22
+**Apply notes:** 2026-09-22; deviations: none
+**Review notes:** 2026-09-22; verdict: yes; deferred: none; criteria: met 1,2,4; unverifiable 3
+
+### Goal
+`/phaser:archive` ticks every acceptance criterion the reviewer verified
+without asking, and asks the user only about criteria the reviewer could
+not verify from the diff. The evidence lives on disk: the reviewer reports a
+per-criterion status, review records it in the Review notes line, archive
+reads it.
+
+### Requirements
+- The reviewer's return block gains a `CRITERIA:` section listing every
+  acceptance criterion of the phase by number with one of `met`,
+  `not-met`, or `unverifiable` (needs a run the diff cannot show, such as a
+  fixture or manual check), each with a one-line reason.
+- The Review notes line records that list:
+  `criteria: met 1,3; unverifiable 2`. (Revised during scrutiny: no
+  `not-met` field, since a `no` verdict writes no line.)
+- Archive Step 3 becomes: run command-shaped criteria as today; tick every
+  criterion the Review notes line marks `met` without asking; ask via the
+  decision protocol for `unverifiable` or unlisted ones. Numbering counts
+  every criterion, ticked ones included. With nothing unverifiable, archive
+  asks nothing.
+- A `not-met` criterion is also a review finding (should-fix or blocker),
+  so a yes verdict with a `not-met` criterion is inconsistent; the reviewer
+  returns `no` in that case. After its Fix-now walk, review re-judges each
+  `not-met` criterion (re-running command-shaped ones) and lifts the verdict
+  to yes if none remain (added during scrutiny).
+- Phase 2's fixture test B is amended: archive asks about Phase 5's
+  criterion only if the reviewer marked it unverifiable; a criterion the
+  reviewer marked met is ticked silently.
+
+### Out of scope
+- Any change to how command-shaped criteria are run.
+- Changes to scrutinizer, implementer, apply, plan, stun, propose.
+- Reviewer verifying criteria by running the app; it judges from the diff.
+
+### Dependencies
+- Phase 2 (Review notes line, archive Step 3).
+- Phase 2's fixture tests A and C have not been run yet; run them on 0.5.1.
+  Test B is superseded by this phase's test D (its wording was amended
+  during propose and can no longer run on 0.5.1).
+
+### Acceptance criteria
+- [ ] `grep -c "CRITERIA:" agents/reviewer.md` returns 1 or more.
+- [ ] `grep -c "unverifiable" commands/archive.md` returns 1 or more.
+- [ ] Fixture test D (user-run). Run a phase through `/phaser:stun` to
+      Complete in `../temp` whose acceptance criteria include at least one
+      non-command criterion the reviewer can judge met from the diff. Pass
+      when the reviewer block carries a `CRITERIA:` section, the Review
+      notes line carries `criteria:`, and archive ticks that criterion
+      without a picker.
+- [ ] `.claude-plugin/plugin.json` reads `0.5.2`.
+
+### Constraints / early decisions
+- Evidence source is the reviewer's per-criterion report, not a wording
+  heuristic in archive (decided 2026-09-22).
+- Patch release.
+
+### Key code touchpoints
+- `agents/reviewer.md`: Axis 1 acceptance-criteria bullet and the Return
+  block.
+- `commands/review.md` Step 4: Review notes line format.
+- `commands/archive.md` Step 3: tick rule.
+- `openspec/specs/phase-closeout/spec.md` and
+  `openspec/specs/subagent-steps/spec.md`: MODIFIED deltas.
+
+### Companion docs
+- `README.md`: the sentence describing what archive ticks and asks.
+
+### Scrutiny notes (2026-09-22)
+Eight findings, all resolved by the user: the dead `not-met` field dropped
+from the Review notes line and archive; task from-strings corrected to the
+files' wrapped lines with wrap-safe greps; unlisted criteria ask, numbering
+counts ticked items; fixture test D now needs a non-command criterion;
+proposal and design corrected to say the Phase 2 test B edit was made during
+propose; test B superseded by D, A and C still on 0.5.1; the risk text now
+names archive's "Ticked on review evidence" line as the mitigation; review
+re-judges `not-met` criteria after Fix-now and lifts the verdict.
