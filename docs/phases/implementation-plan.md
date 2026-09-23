@@ -320,7 +320,7 @@ re-judges `not-met` criteria after Fix-now and lifts the verdict.
 
 ## Phase 4: Repin to Opus 5.5
 
-**Status:** Reviewed (repin-opus-5-5, base 7939d33026505643b67ef229b1e985e50e713d8a)
+**Status:** Complete (2026-09-22, change repin-opus-5-5)
 **Defined:** 2026-09-22
 **Apply notes:** 2026-09-22; deviations: none
 **Review notes:** 2026-09-22; verdict: yes; deferred: none; criteria: met 1,2,4; unverifiable 3
@@ -357,16 +357,16 @@ dispatch; the user chose the alias everywhere.)
 - Claude Code resolving `opus` to Opus 5.5.
 
 ### Acceptance criteria
-- [ ] `grep -rn "claude-fable-5-1" commands/ agents/ README.md` returns
+- [x] `grep -rn "claude-fable-5-1" commands/ agents/ README.md` returns
       nothing.
-- [ ] `grep -c "^model: opus$" commands/plan.md commands/aim.md
+- [x] `grep -c "^model: opus$" commands/plan.md commands/aim.md
       commands/propose.md commands/stun.md` returns 1 for each.
 - [ ] Fixture test E (user-run). Run one trivial phase through
       `/phaser:stun` in `../temp` on 0.5.3. Pass when the scrutinizer and
       reviewer dispatch lines show Opus 5.5 and the phase reaches
       Complete. The four repinned main-session steps bind only on direct
       invocation and are not covered.
-- [ ] `.claude-plugin/plugin.json` reads `0.5.3`.
+- [x] `.claude-plugin/plugin.json` reads `0.5.3`.
 
 ### Constraints / early decisions
 - Fable steps → `opus` alias (decided 2026-09-22). Opus steps → exact
