@@ -236,7 +236,7 @@ acceptance criteria above; Apply/Review notes anchor after `**Defined:**`.
 
 ## Phase 3: Archive ticks on evidence, asks only when there is none
 
-**Status:** Reviewed (archive-ticks-on-evidence, base a007aa609b320a71b7042b4b92f865a7358fc2ea)
+**Status:** Complete (2026-09-22, change archive-ticks-on-evidence)
 **Defined:** 2026-09-22
 **Apply notes:** 2026-09-22; deviations: none
 **Review notes:** 2026-09-22; verdict: yes; deferred: none; criteria: met 1,2,4; unverifiable 3
@@ -282,15 +282,15 @@ reads it.
   during propose and can no longer run on 0.5.1).
 
 ### Acceptance criteria
-- [ ] `grep -c "CRITERIA:" agents/reviewer.md` returns 1 or more.
-- [ ] `grep -c "unverifiable" commands/archive.md` returns 1 or more.
+- [x] `grep -c "CRITERIA:" agents/reviewer.md` returns 1 or more.
+- [x] `grep -c "unverifiable" commands/archive.md` returns 1 or more.
 - [ ] Fixture test D (user-run). Run a phase through `/phaser:stun` to
       Complete in `../temp` whose acceptance criteria include at least one
       non-command criterion the reviewer can judge met from the diff. Pass
       when the reviewer block carries a `CRITERIA:` section, the Review
       notes line carries `criteria:`, and archive ticks that criterion
       without a picker.
-- [ ] `.claude-plugin/plugin.json` reads `0.5.2`.
+- [x] `.claude-plugin/plugin.json` reads `0.5.2`.
 
 ### Constraints / early decisions
 - Evidence source is the reviewer's per-criterion report, not a wording
