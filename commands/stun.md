@@ -1,7 +1,7 @@
 ---
 description: "Drive the current phase from Planned to Complete in this session, pausing only for your decisions (run in accept-edits or auto mode for unattended apply)"
 argument-hint: "[optional: scope] [optional: openspec change id]"
-model: claude-fable-5-1
+model: opus
 disable-model-invocation: true
 ---
 

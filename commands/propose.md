@@ -1,7 +1,7 @@
 ---
 description: "Step 2 of 6 — Use a frontier model to create an OpenSpec proposal (/opsx:propose) for the current phase, with ALL architectural decisions made up front so a smaller model can implement it (invoke only when the user asks or when driven by /phaser:stun)"
 argument-hint: "[optional: scope] [optional: phase number, defaults to latest Planned phase] [optional: plan file path] [optional: extra context or constraints for the proposal]"
-model: claude-fable-5-1
+model: opus
 ---
 
 > Invocation note: this command is only ever run by the user directly or

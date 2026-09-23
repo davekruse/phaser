@@ -317,3 +317,77 @@ proposal and design corrected to say the Phase 2 test B edit was made during
 propose; test B superseded by D, A and C still on 0.5.1; the risk text now
 names archive's "Ticked on review evidence" line as the mitigation; review
 re-judges `not-met` criteria after Fix-now and lifts the verdict.
+
+## Phase 4: Repin to Opus 5.5
+
+**Status:** Reviewed (repin-opus-5-5, base 7939d33026505643b67ef229b1e985e50e713d8a)
+**Defined:** 2026-09-22
+**Apply notes:** 2026-09-22; deviations: none
+**Review notes:** 2026-09-22; verdict: yes; deferred: none; criteria: met 1,2,4; unverifiable 3
+
+### Goal
+Move every Fable and Opus pin in the plugin onto Claude Opus 5.5
+(`claude-opus-5-5`, released 2026-09-22), which Anthropic's docs now
+recommend as the default and which matches Fable 5.1 on most work at
+lower cost. Every pin becomes an alias. (Revised during scrutiny: the
+Agent tool's `model` parameter accepts only `sonnet|opus|haiku|fable` and
+overrides agent frontmatter, so an exact id cannot bind on a subagent
+dispatch; the user chose the alias everywhere.)
+
+### Requirements
+- `commands/plan.md`, `commands/aim.md`, `commands/propose.md`,
+  `commands/stun.md`: frontmatter `model: claude-fable-5-1` becomes
+  `model: opus`.
+- Opus-pinned commands and agents stay on the `opus` alias (revised
+  during scrutiny; was: exact `claude-opus-5-5`).
+- The aim-alias spec's "Fable model pin" wording becomes tier-neutral
+  (added during scrutiny).
+- No file under `commands/`, `agents/` or `README.md` carries the string
+  `claude-fable-5-1` afterwards; plan-file history and archived changes
+  are left alone (scoped during scrutiny).
+- README: workflow table model column, the pin paragraph (every pin is an
+  alias), and the Layout tree comments all reflect the new pins.
+
+### Out of scope
+- Sonnet pins (implementer, apply, archive) stay `sonnet`.
+- Any prompt-text tuning for Opus 5.5 behavior.
+- Effort settings.
+
+### Dependencies
+- Claude Code resolving `opus` to Opus 5.5.
+
+### Acceptance criteria
+- [ ] `grep -rn "claude-fable-5-1" commands/ agents/ README.md` returns
+      nothing.
+- [ ] `grep -c "^model: opus$" commands/plan.md commands/aim.md
+      commands/propose.md commands/stun.md` returns 1 for each.
+- [ ] Fixture test E (user-run). Run one trivial phase through
+      `/phaser:stun` in `../temp` on 0.5.3. Pass when the scrutinizer and
+      reviewer dispatch lines show Opus 5.5 and the phase reaches
+      Complete. The four repinned main-session steps bind only on direct
+      invocation and are not covered.
+- [ ] `.claude-plugin/plugin.json` reads `0.5.3`.
+
+### Constraints / early decisions
+- Fable steps → `opus` alias (decided 2026-09-22). Opus steps → exact
+  `claude-opus-5-5` was decided the same day and reversed at scrutiny:
+  alias everywhere.
+- Patch release.
+
+### Key code touchpoints
+- `commands/{plan,aim,propose,stun}.md` frontmatter. Everything else
+  under `commands/`, `agents/` and `reference/` needs no change; confirm.
+- `openspec/specs/aim-alias/spec.md`: MODIFIED delta.
+
+### Companion docs
+- `README.md` table, pin paragraph, Layout tree.
+
+### Scrutiny notes (2026-09-22)
+Six findings, all resolved by the user: the Agent tool cannot dispatch an
+exact model id and overrides frontmatter, so Opus steps stay on the alias
+(reversing the propose-time decision); the aim-alias spec gets a
+tier-neutral MODIFIED delta instead of skip_specs; the README paragraph
+and Layout task were corrected for the alias-only outcome (three Fable
+comments, not four); fixture test E reworded to what a transcript can
+show; the no-`claude-fable-5-1` requirement scoped to commands/, agents/,
+README.

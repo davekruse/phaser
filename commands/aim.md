@@ -1,7 +1,7 @@
 ---
 description: "Alias of /phaser:plan — define the next development phase"
 argument-hint: "[optional: scope] [optional: phase number] [optional: one-line summary of what this phase should accomplish]"
-model: claude-fable-5-1
+model: opus
 disable-model-invocation: true
 ---
 
