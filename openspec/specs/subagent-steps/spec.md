@@ -82,18 +82,23 @@ acceptance criterion of the phase against the diff and report each as `met`,
 `not-met` or `unverifiable` in a `CRITERIA:` section, and SHALL NOT report
 an unticked acceptance checkbox in the plan file as a finding (an unmet
 criterion is reported as a finding about the code; the checkbox itself is
-archive's to tick). A `not-met` criterion SHALL force `VERDICT: no`. The
-main session SHALL walk findings one at a time with options Fix now / Defer
-/ Accept as-is, SHALL apply "Fix now" edits itself, and after the walk SHALL
-re-judge each `not-met` criterion: re-run a command-shaped one; treat a
-behavioral one as `met` only if a "Fix now" edit addressed the finding that
-named it. If no `not-met` criterion remains the verdict becomes yes (or
-yes-with-deferred when anything was deferred); otherwise it stays no. It
-SHALL set the status line to `Reviewed (<id>, base <sha>)` only for a yes or
-yes-with-deferred verdict, leaving it at Implemented for a no verdict. On a
-yes or yes-with-deferred verdict it SHALL also record
+archive's to tick). A `not-met` criterion SHALL force `VERDICT: no`. Before
+walking anything, the main session SHALL apply the recommended remedy of
+every finding tagged `[auto]` and mark those findings "applied" in the
+numbered summary. It SHALL then walk the remaining findings one at a time
+with options Fix now / Defer / Accept as-is, SHALL apply "Fix now" edits
+itself, and after the walk SHALL re-judge each `not-met` criterion: re-run a
+command-shaped one; treat a behavioral one as `met` only if a "Fix now" edit
+addressed the finding that named it. An `[auto]` remedy that cannot be
+applied as written SHALL be left unapplied, marked "not auto-applied", and
+walked like any other finding. If no `not-met`
+criterion remains the verdict becomes yes (or yes-with-deferred when
+anything was deferred); otherwise it stays no. It SHALL set the status line
+to `Reviewed (<id>, base <sha>)` only for a yes or yes-with-deferred
+verdict, leaving it at Implemented for a no verdict. On a yes or
+yes-with-deferred verdict it SHALL also record
 `**Review notes:** <YYYY-MM-DD>; verdict: <verdict>; deferred: <list|none>;
-criteria: met <nums|none>; unverifiable <nums|none>`
+criteria: met <nums|none>; unverifiable <nums|none>; auto-applied: <n|none>`
 after the `**Apply notes:**` line (or after `**Defined:**` when there is
 none), replacing any earlier Review notes line.
 
@@ -111,7 +116,7 @@ none), replacing any earlier Review notes line.
 
 #### Scenario: Review notes line
 - **WHEN** the verdict is yes-with-deferred with one deferred item
-- **THEN** the phase section carries a single `**Review notes:**` line naming the verdict, that item, and the `criteria:` field, positioned after Apply notes
+- **THEN** the phase section carries a single `**Review notes:**` line naming the verdict, that item, the `criteria:` field and the `auto-applied:` count, positioned after Apply notes
 
 #### Scenario: Unticked checkbox is not a finding
 - **WHEN** the phase's acceptance criteria are met by the diff but their checkboxes are unticked
@@ -132,6 +137,18 @@ none), replacing any earlier Review notes line.
 #### Scenario: Not-met survives the walk
 - **WHEN** a `not-met` criterion is deferred or accepted as-is
 - **THEN** the verdict stays no, the status stays Implemented, and no Review notes line is written
+
+#### Scenario: Auto-applied finding
+- **WHEN** the block contains `2. [nit] [auto] <title>`
+- **THEN** the main session applies finding 2's recommended remedy before any picker, the summary lists finding 2 as "applied", and no AskUserQuestion is raised for it
+
+#### Scenario: Only auto findings
+- **WHEN** every finding in the block carries `[auto]`
+- **THEN** the review raises no picker at all and proceeds to the verdict
+
+#### Scenario: Auto remedy does not apply
+- **WHEN** an `[auto]` finding's remedy no longer matches the file
+- **THEN** review leaves it unapplied, marks it "not auto-applied" in the summary, and walks it with a picker
 
 ### Requirement: Subagent isolation
 Every subagent prompt SHALL contain only identifiers (change id, plan file
@@ -164,9 +181,15 @@ main session can walk them without parsing anything else. Each `DEVIATIONS`
 line SHALL name the task, what was done, and its source (an artifact and
 section, the advisor, or the user). Each `CRITERIA` line SHALL carry the
 criterion's number in plan-file order, one of `met`, `not-met` or
-`unverifiable`, and a one-line reason. When a scrutinizer or reviewer
-finding is that an artifact states something false about the codebase, the
-remedy marked recommended SHALL be the one that corrects the artifact.
+`unverifiable`, and a one-line reason. A reviewer finding MAY carry an
+`[auto]` tag directly after its severity tag, and SHALL carry it only when
+all of the following hold: the severity is nit or should-fix; the
+recommended remedy's con reads `none`; the fix is a single localized edit
+with one defensible form; the reviewer is highly confident; the finding
+does not name a criterion the reviewer marked `not-met`. A blocker SHALL
+never carry `[auto]`. When a scrutinizer or reviewer finding is that an
+artifact states something false about the codebase, the remedy marked
+recommended SHALL be the one that corrects the artifact.
 
 #### Scenario: Empty findings
 - **WHEN** the scrutinizer or reviewer finds nothing
@@ -183,6 +206,14 @@ remedy marked recommended SHALL be the one that corrects the artifact.
 #### Scenario: Criteria line shape
 - **WHEN** the reviewer judges the phase's second criterion as needing a fixture run
 - **THEN** its `CRITERIA` section contains `2. unverifiable — <reason>`
+
+#### Scenario: Auto tag bar
+- **WHEN** a nit's recommended remedy is a two-word wording change with `con: none`
+- **THEN** the finding reads `[nit] [auto]`
+
+#### Scenario: Auto tag withheld
+- **WHEN** a should-fix's recommended remedy carries any con, or two remedies are equally defensible, or the severity is blocker, or the finding names a `not-met` criterion
+- **THEN** the finding carries no `[auto]` tag
 
 ### Requirement: No fresh-context machinery
 No command SHALL contain a fresh-context check or an instruction to run

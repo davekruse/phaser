@@ -394,7 +394,7 @@ README.
 
 ## Phase 5: Review auto-applies obvious fixes
 
-**Status:** Reviewed (review-auto-apply, base c1e782f8608f406fe4c018debf8a2b3feea557b5)
+**Status:** Complete (2026-09-22, change review-auto-apply)
 **Defined:** 2026-09-22
 **Apply notes:** 2026-09-22; deviations: none
 **Review notes:** 2026-09-22; verdict: yes; deferred: none; criteria: met 1,2,4; unverifiable 3; auto-applied: 1
@@ -435,14 +435,14 @@ summary but is asked only about findings that carry a real trade-off.
 - Phase 3 (reviewer block shape, Review notes line).
 
 ### Acceptance criteria
-- [ ] `grep -c "\[auto\]" agents/reviewer.md` returns 2 or more.
-- [ ] `grep -c "auto-applied" commands/review.md` returns 1 or more.
+- [x] `grep -c "\[auto\]" agents/reviewer.md` returns 2 or more.
+- [x] `grep -c "auto-applied" commands/review.md` returns 1 or more.
 - [ ] Fixture test F (user-run). Run one phase through `/phaser:stun` in
       `../temp` on 0.5.4 whose review yields at least one `[auto]`
       finding. Pass when that finding is applied with no picker, appears
       as "applied" in the summary, and the Review notes line carries
       `auto-applied: <n>`.
-- [ ] `.claude-plugin/plugin.json` reads `0.5.4`.
+- [x] `.claude-plugin/plugin.json` reads `0.5.4`.
 
 ### Constraints / early decisions
 - Signal is a reviewer-set `[auto]` tag, not main's judgment (decided
