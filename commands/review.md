@@ -57,9 +57,13 @@ If the returned block reads `FINDINGS: 0`, skip to Step 4.
 
 Otherwise, first apply the recommended remedy of every finding tagged `[auto]`,
 in numbered order, without asking — these are the reviewer's own no-downside
-calls, and you report them in first person. Then present the
-numbered summary of all findings with their severities, marking each
-auto-applied one "applied". If an `[auto]` remedy cannot be applied as
+calls, and you report them in first person. Then present the numbered
+summary of all findings with their severities, marking each auto-applied one
+"applied" with its `Auto because:` reason. Follow the summary with an
+information point for each auto-applied blocker and each auto-applied
+finding that names a `not-met` criterion: a short paragraph naming the
+finding, the remedy you applied, its `Auto because:` reason, and the
+alternatives you passed over. If an `[auto]` remedy cannot be applied as
 written — the file no longer matches, or the remedy is ambiguous or looks
 wrong — do not improvise: leave it unapplied, mark it "not auto-applied" in
 the summary, and walk it like any untagged finding. Then walk the remaining
@@ -79,11 +83,11 @@ findings ONE at a time; if none remain, skip to Step 4:
 Take the overall verdict from the subagent's `VERDICT:` line.
 
 **Re-judge after fixes.** If the block marks any criterion `not-met`, revisit
-each after Step 3: re-run a command-shaped one; for a behavioral one, treat
-it as `met` only if a "Fix now" edit in Step 3 addressed the finding that
-named it. If no `not-met` criterion remains, the verdict becomes `yes` (or
-`yes-with-deferred` if anything was deferred); otherwise it stays `no`. Say
-which criteria were re-judged.
+each after Step 3: re-run a command-shaped one; for a behavioral one, treat it
+as `met` only if a "Fix now" edit or an auto-applied remedy in Step 3
+addressed the finding that named it. If no `not-met` criterion remains, the
+verdict becomes `yes` (or `yes-with-deferred` if anything was deferred);
+otherwise it stays `no`. Say which criteria were re-judged.
 
 - `yes` or `yes-with-deferred` — update the phase status line to
   `**Status:** Reviewed (<change id>, base <sha>)` (carry the base forward so

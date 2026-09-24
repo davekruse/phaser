@@ -20,8 +20,15 @@ bare prose and never bundle several decisions into one message:
    notes and OpenSpec artifacts, say what the user chose — never "I resolved"
    or "I decided" for a choice that went through this protocol. First person
    is for choices you made without asking.
-5. **Do not ask about obvious choices.** When the option you would recommend
-   has no con, your confidence is high, and the action is a single
-   reversible edit, act and report it (first person — it is your call, not
-   the user's). Only steps whose command text adopts this clause use it;
-   today that is `/phaser:review`, driven by the reviewer's `[auto]` tag.
+5. **Do not ask about obvious choices.** When your confidence is high, the
+   option you would recommend has no con — or its only con is extra work —
+   no other option is equally good, and the action is reversible, act and
+   report it (first person — it is your call, not the user's). Bringing
+   OpenSpec artifacts or specs, docs, or CLAUDE.md in line with the actual code
+   is always such a choice when it is the recommended option and the code,
+   not the doc, is confidently correct. Only steps whose command text
+   adopts this clause use it; today that is `/phaser:review` and
+   `/phaser:scrutinize`, driven by their subagents' `[auto]` tag. An
+   auto-applied review blocker, or an auto-applied fix for a `not-met`
+   criterion, is reported as its own information point: what was chosen,
+   why it was obvious, and the alternatives.

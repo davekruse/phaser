@@ -469,3 +469,108 @@ never `[auto]`, so a `no` verdict only flips with a user decision (re-judge
 keeps "Fix now" only); task 2.3 now names the rewrap point and the count's
 source; the README sentence is a new paragraph and the Review notes summary
 line is left alone; fixture test F left as written.
+
+## Phase 6: Auto-decide no-brainers in review and scrutinize
+
+**Status:** Complete (2026-09-24, change auto-decide-no-brainers)
+**Defined:** 2026-09-24
+**Apply notes:** 2026-09-24; deviations: none
+**Review notes:** 2026-09-24; verdict: yes; deferred: none; criteria: met 1,2,3,4,6; unverifiable 5; auto-applied: 2
+
+### Goal
+`/phaser:review` and `/phaser:scrutinize` stop asking about choices with an
+obvious answer. A remedy qualifies when it has no cons, or when its only con
+is extra work. A remedy with no cons also qualifies when the other remedies
+are clearly worse. Changes that sync specs, docs or CLAUDE.md to what the
+code actually does are always applied without asking. The user is asked only
+about real trade-offs.
+
+### Requirements
+- `[auto]` eligibility (reviewer, and now scrutinizer) is broadened. A
+  finding qualifies when (a) the recommended remedy's con reads `none` or
+  names only extra effort or work, or (b) the recommended remedy has no con
+  and the subagent is confident every alternative is clearly worse. The
+  "one defensible form" condition is dropped.
+- A remedy that only brings OpenSpec specs, README or other docs, or
+  CLAUDE.md into line with the actual code is always `[auto]`.
+- The severity cap is removed: blockers can be `[auto]`.
+- A finding that names a `not-met` criterion can be `[auto]`. After it is
+  applied, the Step 4 re-judge counts it as addressed, so the verdict can
+  move to `yes` without a user decision.
+- Auto-applied blockers and auto-applied `not-met` fixes are each reported
+  as a separate information point in the summary: the choice made, why it
+  was obvious, and the alternatives. They are never a bare "applied" line.
+- Scrutinize: the scrutinizer tags `[auto]` under the same rules. Step 3
+  applies `[auto]` resolutions to the change artifacts before the walk and
+  walks only the rest. A resolution that cannot be applied as written falls
+  back to a picker.
+- The Scrutiny notes subsection's first sentence records the count,
+  `<n> findings; auto-applied: <n|none>.` (reworded during scrutiny).
+- The decision protocol's "obvious choices" clause is updated to the
+  broadened rule and names both review and scrutinize.
+- Version bump to 0.5.5.
+
+### Out of scope
+- Apply escalations and spec-advisor, plan and propose. These keep asking.
+- Changing severity definitions.
+- Changes to stun's own chaining behavior.
+
+### Dependencies
+- Phase 5 (the `[auto]` tag, Review notes `auto-applied` field, the
+  decision-protocol clause).
+
+### Acceptance criteria
+- [x] `grep -c "\[auto\]" agents/scrutinizer.md` returns 2 or more.
+- [x] `grep -c "auto-applied" commands/scrutinize.md` returns 1 or more.
+- [x] `agents/reviewer.md` no longer excludes blockers or `not-met`
+      findings from `[auto]`, and its eligibility text treats extra effort
+      as not a con.
+- [x] `reference/decision-protocol.md` names both `/phaser:review` and
+      `/phaser:scrutinize` as adopting the clause, and includes the always
+      rule for syncing specs, docs and CLAUDE.md.
+- [x] Fixture test G (user-run). Run one phase through `/phaser:stun` in
+      `../temp` on 0.5.5. Pass when at least one scrutinize finding and one
+      review finding are auto-applied with no picker, and any auto-applied
+      blocker appears as an information point.
+- [x] `.claude-plugin/plugin.json` reads `0.5.5`.
+
+### Constraints / early decisions
+- Scope is review and scrutinize (user, 2026-09-24).
+- Blockers are eligible, and each one is reported as an information point
+  (user, 2026-09-24).
+- `not-met` fixes are eligible, and the re-judge can move the verdict
+  (user, 2026-09-24).
+- The signal stays a subagent-set `[auto]` tag, following Phase 5.
+- Patch release.
+- Two equally good no-con options still go to a picker (user, scrutiny
+  2026-09-24).
+- The sync-to-code rule applies only when the sync is the recommended remedy
+  and the code is confidently correct; scrutinize may auto-correct Key code
+  touchpoints but never Requirements, Constraints or Acceptance criteria
+  (scrutiny 2026-09-24).
+
+### Key code touchpoints
+- `agents/reviewer.md`: the `[auto]` eligibility paragraph and the block.
+- `agents/scrutinizer.md`: Return section; add the `[auto]` tag.
+- `commands/review.md`: Step 3 (information points) and Step 4 (the re-judge
+  accepts auto-applied fixes).
+- `commands/scrutinize.md`: Step 3 (auto-apply before the walk) and Step 4
+  (the count in Scrutiny notes).
+- `reference/decision-protocol.md`: clause 5.
+- `openspec/specs/subagent-steps/spec.md`,
+  `openspec/specs/decision-protocol/spec.md`: MODIFIED deltas.
+- `commands/{apply,plan,propose,archive,stun}.md`, `agents/{implementer,
+  spec-advisor}.md`: no change; confirm.
+
+### Companion docs
+- `README.md`: the "How decisions reach you" section.
+
+### Scrutiny notes (2026-09-24)
+7 findings; auto-applied: 5. I applied five no-downside fixes: the always-sync
+rule applies only when the sync is the recommended remedy and the code is
+confidently right; the Scrutiny notes wording in the phase now matches the
+subsection format; multi-word verify greps join lines first; scrutinize Step 4
+now also lists spec deltas; README gains a Scrutiny notes clause. The user
+chose that scrutinize may auto-correct Key code touchpoints but never
+Requirements, Constraints or Acceptance criteria, and that ties between equally
+good options still go to a picker.

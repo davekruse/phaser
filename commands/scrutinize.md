@@ -53,9 +53,19 @@ Follow your agent definition and return your block.
 
 If the returned block reads `FINDINGS: 0`, skip to Step 4.
 
-Otherwise present the subagent's one-line numbered summary of all findings
-first, so the user knows the shape of the conversation. Then walk through them
-ONE at a time — never dump the full analysis at once.
+Otherwise, first take the recommended option of every finding tagged
+`[auto]`, in numbered order, without asking, and edit the OpenSpec artifacts
+(proposal, design doc, spec deltas, tasks) — and, for a touchpoint
+correction, the phase's Key code touchpoints in the plan file — to reflect
+it — these are the scrutinizer's own no-downside calls, and you report them
+in first person. If an `[auto]` option cannot be applied as written — the
+artifact no longer matches, or the option is ambiguous or looks wrong — do
+not improvise: leave it unapplied, mark it "not auto-applied" in the
+summary, and walk it like any untagged finding. Then present the subagent's
+one-line numbered summary of all findings, marking each auto-applied one
+"applied" with its `Auto because:` reason, so the user knows the shape of
+the conversation. Then walk the remaining findings ONE at a time — never
+dump the full analysis at once; if none remain, skip to Step 4.
 
 Put each item to the user via the **decision protocol** in
 `${CLAUDE_PLUGIN_ROOT}/reference/decision-protocol.md` (read it first), using
@@ -71,10 +81,18 @@ the summary — a failed spec claim usually deserves its own decision.
 ## Step 4: Fold resolutions back into the spec
 
 After the last item, update the OpenSpec artifacts (proposal, design doc,
-tasks) so every resolution is reflected in the spec itself — the spec must
-remain the single source of truth for `/phaser:apply`. If any resolution
-changed the phase's requirements or scope, update the phase section in
-the plan file too, and note the change.
+spec deltas, tasks) so every resolution is reflected in the spec itself —
+the spec must remain the single source of truth for `/phaser:apply`. If any
+resolution changed the phase's requirements or scope, update the phase
+section in the plan file too, and note the change.
+
+Then append to the end of the phase section a `### Scrutiny notes
+(<YYYY-MM-DD>)` subsection. Its first sentence reads `<n> findings;
+auto-applied: <n|none>.`, where `auto-applied` is the count of `[auto]`
+findings you applied in Step 3; follow it with one paragraph summarising the
+resolutions, attributing each to the user or, for auto-applied ones, to
+yourself in first person. With `FINDINGS: 0` it reads `0 findings;
+auto-applied: none.` and nothing more.
 
 Update the phase status line to `**Status:** Scrutinized (<change id>)`.
 

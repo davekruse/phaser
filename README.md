@@ -72,9 +72,13 @@ escalated by the advisor during `apply` — follows the same shape:
 3. One item at a time — no wall of findings, no bare free-text questions. The
    built-in "Other" is always there when none of the options fit.
 
-`review` goes one step further: findings the reviewer marks as having no
-downside are applied before you are asked anything, and named as applied in
-the summary — pickers are reserved for real trade-offs.
+`review` and `scrutinize` go one step further: when the recommended fix has
+no downside — or only costs more work — and nothing else is as good, it is
+applied before you are asked anything and named as applied in the summary,
+and syncing specs and docs to what the code actually does is always applied.
+An auto-applied review blocker, or a fix that clears a failed acceptance
+criterion, is spelled out on its own: what was chosen, why, and what was
+passed over. Pickers are reserved for real trade-offs.
 
 `plan` opens with one prose question — what should this phase accomplish?
 (including `/phaser:plan ats`, where `ats` is the plan scope, not the thing
@@ -92,10 +96,11 @@ commands keep updated (Planned -> Proposed -> Scrutinized -> Implemented ->
 Reviewed -> Complete). `Implemented` also records the base commit SHA so
 `review` can diff the whole phase, including anything committed along the way.
 `apply` leaves an `Apply notes` line recording every deviation from the task
-text and its source; `review` leaves a `Review notes` line with its verdict
-and deferred items; `archive` re-runs command-shaped acceptance criteria,
-ticks the ones the reviewer verified, asks you only about the ones it could
-not, and names any left unticked.
+text and its source; `scrutinize` appends a `Scrutiny notes` subsection with
+its findings and auto-applied counts; `review` leaves a `Review notes` line
+with its verdict and deferred items; `archive` re-runs command-shaped
+acceptance criteria, ticks the ones the reviewer verified, asks you only about
+the ones it could not, and names any left unticked.
 
 Plans can be **scoped**: `/phaser:plan ats 10` records Phase 10 in
 `docs/phases/implementation-plan-ats.md` instead of the default

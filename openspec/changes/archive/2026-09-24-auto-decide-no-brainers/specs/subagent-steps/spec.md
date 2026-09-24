@@ -1,12 +1,4 @@
-# subagent-steps Specification
-
-## Purpose
-
-Runs the scrutinize, apply and review steps' heavy work in isolated
-subagents with exact model pins, so cold reads no longer depend on `/clear`
-and model choice no longer depends on the session model.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Scrutinize runs its cold read in a subagent
 `/phaser:scrutinize` SHALL dispatch the `scrutinizer` subagent (model opus)
@@ -42,55 +34,6 @@ subsection whose first sentence reads `<n> findings; auto-applied:
 #### Scenario: Scrutiny notes count
 - **WHEN** scrutinize finishes with five findings, two auto-applied
 - **THEN** the phase section gains a `### Scrutiny notes (<date>)` subsection beginning `5 findings; auto-applied: 2.`
-
-### Requirement: Apply runs in a subagent with an advisor relay
-`/phaser:apply` SHALL record the base commit (`git rev-parse HEAD`) unless
-the status line already carries one, then dispatch the `implementer`
-subagent (model sonnet) with identifiers only (change id, plan file path,
-phase number, base SHA). The implementer SHALL work the task list via the
-`openspec` CLI and return `DONE` or `BLOCKED`. When a task is ambiguous,
-self-contradictory, or collides with the codebase, the implementer SHALL
-first look for the answer in the change's other artifacts (proposal, design,
-spec deltas); if exactly one resolution follows from them it SHALL apply it
-and record it under `DEVIATIONS`; it SHALL return `BLOCKED` only when no
-artifact answers the question or the artifacts contradict each other. On
-`BLOCKED`, the main session SHALL dispatch `spec-advisor`; on `RESOLVED` it
-SHALL resume the same implementer with the resolution; on `ESCALATE` it
-SHALL put the decision to the user via the decision protocol and then resume
-the same implementer with the choice. On `DONE` it SHALL report every
-`DEVIATIONS` line to the user, record them in the phase section of the plan
-file as an `**Apply notes:**` line, apply every item the advisor listed under
-`SPEC UPDATES NEEDED` to the OpenSpec artifacts, then set the status line to
-`Implemented (<id>, base <sha>)`. The `**Apply notes:**` line SHALL sit
-directly after the phase's `**Defined:**` line, replacing any earlier one.
-
-#### Scenario: Blocked round-trip
-- **WHEN** the implementer returns BLOCKED on task 3
-- **THEN** spec-advisor is consulted, the same implementer is resumed via SendMessage with the outcome, and it continues from task 3 without re-reading completed tasks
-
-#### Scenario: Re-apply keeps base
-- **WHEN** apply runs on a phase whose status line already reads `Implemented (<id>, base <sha>)`
-- **THEN** the existing base SHA is kept
-
-#### Scenario: Not yet scrutinized
-- **WHEN** the target phase's status is not Scrutinized
-- **THEN** apply warns and asks whether to proceed before dispatching anything
-
-#### Scenario: Ambiguity answered elsewhere in the change
-- **WHEN** a task names two candidate file paths and the design doc names one of them
-- **THEN** the implementer uses the design doc's path without blocking, and its `DEVIATIONS` block names the task, the path chosen, and the design decision it came from
-
-#### Scenario: Ambiguity answered nowhere
-- **WHEN** a task names two candidate file paths and no artifact in the change chooses between them
-- **THEN** the implementer returns BLOCKED naming that task
-
-#### Scenario: Deviations reach the plan file
-- **WHEN** the implementer returns DONE with one or more `DEVIATIONS` lines
-- **THEN** the user sees each line, and the phase section gains an `**Apply notes:**` line directly after `**Defined:**` carrying them, before the status line changes to Implemented
-
-#### Scenario: No deviations
-- **WHEN** every task was executed exactly as its text reads
-- **THEN** `DEVIATIONS` reads `none` and the `**Apply notes:**` line records "deviations: none"
 
 ### Requirement: Review runs its cold read in a subagent
 `/phaser:review` SHALL dispatch the `reviewer` subagent (model opus) with
@@ -180,28 +123,6 @@ auto-applied: <n|none>` after the `**Apply notes:**` line (or after
 - **WHEN** an `[auto]` finding names behavioral criterion 2, marked `not-met`, and its remedy applies cleanly
 - **THEN** review reports it as an information point, re-judges criterion 2 as met, and the verdict becomes yes with no picker
 
-### Requirement: Subagent isolation
-Every subagent prompt SHALL contain only identifiers (change id, plan file
-path, phase number, base SHA) and SHALL NOT contain the main session's own
-reading of the spec, code or diff. Subagents SHALL read everything they need
-from disk.
-
-#### Scenario: Prompt content
-- **WHEN** any of the three subagents is dispatched
-- **THEN** its prompt is under 20 lines and quotes no artifact or code
-
-#### Scenario: Namespaced agent type
-- **WHEN** a command dispatches a subagent
-- **THEN** `subagent_type` is the plugin-namespaced name (`phaser:scrutinizer`, `phaser:implementer`, `phaser:reviewer`, `phaser:spec-advisor`)
-
-### Requirement: Single plan-file writer
-Only the main session SHALL edit files under `docs/phases/`; subagent
-definitions SHALL state that they never write there.
-
-#### Scenario: Agent finishes
-- **WHEN** a subagent returns
-- **THEN** the plan file is unchanged until the main session updates it
-
 ### Requirement: Fixed return blocks
 Each subagent SHALL end its reply with the block defined for it in design.md
 (scrutinizer: `FINDINGS`/`SPEC CLAIMS VERIFIED`; implementer:
@@ -263,19 +184,3 @@ recommended SHALL be the one that corrects the artifact.
 #### Scenario: Doc sync is always auto
 - **WHEN** the scrutinizer finds design.md names a file that does not exist, and the recommended option rewords design.md
 - **THEN** the finding reads `[Question] [auto]` or `[Decision] [auto]` with an `Auto because:` line
-
-### Requirement: No fresh-context machinery
-No command SHALL contain a fresh-context check or an instruction to run
-`/clear`, and the README SHALL not describe any step as requiring `/clear`.
-
-#### Scenario: Grep
-- **WHEN** `grep -rn "/clear" commands/ README.md` is run
-- **THEN** it returns nothing
-
-### Requirement: Manual and driven steps share one text
-The stun-driven form and the manual form of scrutinize, apply and review
-SHALL be the same command file; `--stun` changes only the hand-off.
-
-#### Scenario: Diff
-- **WHEN** a command runs with and without `--stun`
-- **THEN** the only behavioural difference is whether the hand-off asks or chains
