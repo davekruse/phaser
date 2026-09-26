@@ -58,6 +58,11 @@ main-session steps — propose, archive, and every decision walk — run on the
 command's pin when you invoke the command yourself and on your session model
 when `/phaser:stun` drives them.
 
+For an extra check from a stronger model, start the session with
+`claude --advisor fable` (or run `/advisor fable`). This is Claude Code's
+built-in advisor tool, separate from phaser's `spec-advisor`. It is set per
+session, not by the plugin, and every phaser subagent inherits it.
+
 ## How decisions reach you
 
 Every point where a step needs *your* call — an architectural fork in
