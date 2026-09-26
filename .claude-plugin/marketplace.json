@@ -1,5 +1,6 @@
 {
   "name": "krusetech",
+  "description": "Krusetech Claude Code plugins, including phaser: a phased OpenSpec workflow with model pinning per step",
   "owner": {
     "name": "Dave Kruse",
     "email": "dave@krusetech.com"
