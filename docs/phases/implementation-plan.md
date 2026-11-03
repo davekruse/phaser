@@ -574,3 +574,111 @@ now also lists spec deltas; README gains a Scrutiny notes clause. The user
 chose that scrutinize may auto-correct Key code touchpoints but never
 Requirements, Constraints or Acceptance criteria, and that ties between equally
 good options still go to a picker.
+
+## Phase 7: Route phase documentation out of root CLAUDE.md
+
+**Status:** Complete (2026-11-03, change route-phase-docs)
+**Defined:** 2026-11-02
+**Apply notes:** 2026-11-03; deviations: none
+**Review notes:** 2026-11-03; verdict: yes; deferred: none; criteria: met 1,2,3,4,5,6,8; unverifiable 7; auto-applied: none
+
+### Goal
+Phaser stops growing root CLAUDE.md one block per phase. Archive writes the
+phase summary and unverified criteria to dedicated files, propose and plan
+send each kind of document to its proper home, and review and scrutinize
+catch narrative added to root CLAUDE.md at the first pass.
+
+### Requirements
+- Default doc locations, used when the project has no "Recording a phase"
+  rule (in its CLAUDE.md): `docs/phase-log.md`, `docs/operator-todo.md`,
+  `docs/runbook.md`, `docs/decisions.md`. A project's "Recording a phase"
+  rule always overrides these defaults.
+- Archive appends Step 5's delivery paragraph to the phase log under
+  `## Phase N — <name> (<YYYY-MM-DD>, <change id>)`, creating the file if
+  absent.
+- Archive writes the unticked criteria from Step 3 to the operator to-do
+  file under a heading for the phase; nothing is written when none are
+  unticked.
+- Archive updates the phase's existing line in root CLAUDE.md's index if
+  one exists; it never adds a line or an index.
+- Propose Step 3 gains a routing rule: a root CLAUDE.md task may only add
+  an index line or a rule that breaks things when ignored; how an area
+  works now goes in the nearest folder CLAUDE.md; recipes go in the
+  runbook; the reasons behind choices go in the decisions log; never "add a
+  block under Phase N status"; a project's "Recording a phase" rule wins.
+- Plan's Companion docs guidance suggests the phase log, runbook, to-do
+  file, decisions log and area CLAUDE.md by default, not root CLAUDE.md.
+- Reviewer and scrutinizer flag a task or diff that adds narrative to root
+  CLAUDE.md as should-fix `[auto]`, remedy: reroute it per the routing
+  rule.
+- Reviewer and scrutinizer flag root CLAUDE.md over about 25 KB as a nit,
+  report only (not `[auto]`), recommending a split.
+- Version bump to 0.5.7.
+
+### Out of scope
+- A one-time command that splits an already-bloated CLAUDE.md (candidate
+  Phase 8).
+- Creating a per-phase index in CLAUDE.md.
+- Auto-detecting existing TODO/runbook/ADR files with other names.
+- Rewriting existing project CLAUDE.md content.
+
+### Dependencies
+- Phase 6 (`[auto]` eligibility and the sync-docs-to-code rule).
+- Phase 3 (archive's Step 3 criteria collection).
+
+### Acceptance criteria
+- [x] `grep -c "phase-log.md" commands/archive.md` returns 1 or more.
+- [x] `grep -c "operator-todo.md" commands/archive.md` returns 1 or more.
+- [x] `grep -c "Recording a phase" commands/propose.md` returns 1 or more.
+- [x] `grep -c "Phase N status" commands/propose.md` returns 1 or more.
+- [x] `grep -c "25 KB" agents/reviewer.md agents/scrutinizer.md` reports
+      1 or more for each file.
+- [x] `commands/plan.md`'s Companion docs guidance names the phase log
+      and runbook, and does not suggest root CLAUDE.md.
+- [x] Fixture test H (user-run). Run one phase through `/phaser:stun` in
+      `../temp` on 0.5.7. Pass when no task adds a block to root CLAUDE.md,
+      `docs/phase-log.md` gains the phase heading, and any unticked
+      criterion lands in `docs/operator-todo.md`.
+- [x] `.claude-plugin/plugin.json` reads `0.5.7`.
+
+### Constraints / early decisions
+- Scope is items 1–4; the split command is deferred (user, 2026-11-02).
+- Flat `docs/` defaults (user, 2026-11-02).
+- Archive updates a CLAUDE.md index line only if present (user,
+  2026-11-02).
+- Narrative: should-fix `[auto]`; size: nit, report only (user,
+  2026-11-02).
+- Narrative content the phase itself explicitly asks to put in root
+  CLAUDE.md is raised without `[auto]` (user, scrutiny 2026-11-03).
+- The CLAUDE.md index-line match is scope-aware (user, scrutiny
+  2026-11-03).
+- An archive re-run replaces its phase-log and to-do sections rather than
+  appending (user, scrutiny 2026-11-03).
+- Patch release.
+
+### Key code touchpoints
+- `commands/archive.md`: Steps 3–5 (collected criteria and summary now
+  written to files).
+- `commands/propose.md`: Step 3, the "Companion docs" sentence.
+- `commands/plan.md`: Step 2 Companion docs line and the template
+  placeholder.
+- `agents/reviewer.md`, `agents/scrutinizer.md`: findings checklist and
+  `[auto]` paragraph.
+- `openspec/specs/phase-closeout`, `plan-interview`, `subagent-steps`:
+  ADDED deltas; new `doc-routing` capability; new
+  `reference/doc-routing.md` (corrected during scrutiny).
+- `commands/{apply,review,scrutinize,stun}.md`: no change; confirm.
+
+### Companion docs
+- `README.md`: archive row in the steps table and the archive description.
+
+### Scrutiny notes (2026-11-03)
+6 findings; auto-applied: 3. I applied three no-downside fixes: Key code
+touchpoints now say ADDED deltas plus the new `doc-routing` capability and
+reference file; the narrative check also covers a change that creates root
+CLAUDE.md, with only the size check skipped when the file is absent; task 4.1
+quotes the exact two-line anchor in `commands/plan.md` (and task 4.2's verify
+grep no longer collides with it). The user chose that narrative a phase
+explicitly asks for in root CLAUDE.md is raised without `[auto]`, that the
+index-line match is scope-aware, and that an archive re-run replaces its
+phase-log and to-do sections instead of appending.
