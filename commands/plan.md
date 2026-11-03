@@ -74,8 +74,11 @@ starts specifying architecture, capture it under a "Constraints / early
 decisions" note rather than expanding on it. Likewise capture any code areas
 the user knows the phase touches (and invariants like "X should need no
 changes") under "Key code touchpoints", and docs that must stay in sync under
-"Companion docs" — this is where the user's knowledge of the codebase's risk
-spots gets recorded for the proposer.
+"Companion docs" (by default the phase log, runbook, operator to-do file,
+decisions log and the CLAUDE.md of the area the phase touches, per
+`${CLAUDE_PLUGIN_ROOT}/reference/doc-routing.md` — not root CLAUDE.md).
+This is where the user's knowledge of the codebase's risk spots gets
+recorded for the proposer.
 
 If the phase is too large to be implemented and reviewed comfortably in one
 pass, say so and propose splitting it; a good phase is one coherent, shippable
@@ -118,7 +121,8 @@ it to the plan file as shown:
   e.g. "confirm X requires no changes">
 
 ### Companion docs (optional)
-- <docs that must be reconciled when this phase lands>
+- <docs that must be reconciled when this phase lands: phase log, runbook,
+  operator to-do, decisions log, area CLAUDE.md — not root CLAUDE.md>
 ```
 
 Never rewrite or renumber earlier phases; the file is an append-only history

@@ -59,6 +59,18 @@ Conduct a senior-developer-level review and build a written findings list.
 - If the phase lists "Key code touchpoints" with invariants (e.g. "X requires
   no changes"), confirm the diff honors them — invariant-protected areas must
   not be touched unless the spec explicitly says so.
+- Root CLAUDE.md growth. If the diff adds anything to root CLAUDE.md
+  (including creating it) other than an index line or a rule
+  that breaks things when ignored, report a should-fix finding tagged
+  `[auto]` (or untagged, when the phase's Requirements, Constraints or
+  Companion docs explicitly ask for that content in root CLAUDE.md) whose
+  recommended remedy moves that content to its home: how an
+  area works now to the nearest folder CLAUDE.md, recipes to
+  `docs/runbook.md`, reasons to `docs/decisions.md`, per-phase narrative to
+  `docs/phase-log.md` (or the paths a "Recording a phase" section in root
+  CLAUDE.md names). If root CLAUDE.md exists and `wc -c < CLAUDE.md`
+  exceeds 25600 (about 25 KB), report a nit recommending a split; never
+  tag that one `[auto]`.
 
 **Axis 2 — Code quality**
 - Correctness: logic errors, edge cases, off-by-ones, error handling,

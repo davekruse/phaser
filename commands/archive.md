@@ -72,10 +72,39 @@ In the plan file, update the phase's status line to:
 
 `**Status:** Complete (<YYYY-MM-DD>, change <change id>)`
 
+Then record the phase in the project's docs. Read
+`${CLAUDE_PLUGIN_ROOT}/reference/doc-routing.md` first for the default
+paths and the "Recording a phase" override.
+
+- Compose the one-paragraph summary of what this phase delivered (Step 5
+  repeats it verbatim). Append it to the phase log under the heading
+  `## Phase N — <phase title> (<YYYY-MM-DD>, <change id>)`, where the title
+  is the text after `Phase N: ` in the plan file. For a scoped plan file
+  (`implementation-plan-<scope>.md`), put `<scope> ` before `Phase`.
+  Create the file with the line `# Phase log` first if it does not exist.
+  If the file already has a section whose heading starts with the same
+  `## Phase N — ` (with the same scope prefix, if any), replace that whole
+  section, heading included, instead of appending; the same applies to
+  the operator to-do file below.
+- If any criterion was left unticked in Step 3, append to the operator
+  to-do file a section with the same heading, listing each unticked
+  criterion's text as a `- [ ]` item. Create the file with the line
+  `# Operator to-do` first if it does not exist. If none was left
+  unticked, do not touch the file.
+- If root `CLAUDE.md` has exactly one list-item line mentioning `Phase N`
+  (N not followed by another digit) that also contains `<scope>` for a
+  scoped plan file, or, for the unscoped plan, contains no scope of any
+  other `docs/phases/implementation-plan-<scope>.md`, replace any of the words Planned,
+  Proposed, Scrutinized, Implemented or Reviewed on that line with
+  `Complete`. Otherwise leave root CLAUDE.md untouched. Never add a line
+  to it.
+
 ## Step 5: Hand off
 
-Confirm completion and give a one-paragraph summary of what this phase
-delivered. Then list `Unverified criteria: <each unticked criterion, or
+Confirm completion and give the summary paragraph from Step 4, then name
+each file Step 4 wrote or edited (phase log at docs/phase-log.md by
+default, operator to-do at docs/operator-todo.md by default, root
+CLAUDE.md). Then list `Unverified criteria: <each unticked criterion, or
 none>`. Then list `Ticked on review evidence: <numbers, or none>`. End with:
 
 > **Phase N complete.** The cycle restarts with `/phaser:plan` whenever you're

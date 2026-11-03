@@ -40,7 +40,7 @@ judge only the artifacts on disk, with nothing for you to remember to do first.
 | 3    | `/phaser:scrutinize`| Opus 5.5 (subagent)            | Question the spec from multiple angles, item by item |
 | 4    | `/phaser:apply`     | Sonnet subagent + Opus 5.5 advisor | Faithful execution; spec conflicts go to the `spec-advisor` subagent |
 | 5    | `/phaser:review`    | Opus 5.5 (subagent)            | Senior review of the phase's changes, item by item |
-| 6    | `/phaser:archive`   | Sonnet (latest)                | `/opsx:archive` + tick acceptance criteria + mark phase Complete |
+| 6    | `/phaser:archive`   | Sonnet (latest)                | `/opsx:archive` + tick acceptance criteria + write phase log + mark phase Complete |
 |      | `/phaser:stun`      | Opus 5.5                       | Drives a phase Planned -> Complete, pausing only for your decisions |
 
 `/phaser:stun` dispatches one step — whichever the plan file's status line
@@ -105,7 +105,9 @@ text and its source; `scrutinize` appends a `Scrutiny notes` subsection with
 its findings and auto-applied counts; `review` leaves a `Review notes` line
 with its verdict and deferred items; `archive` re-runs command-shaped
 acceptance criteria, ticks the ones the reviewer verified, asks you only about
-the ones it could not, and names any left unticked.
+the ones it could not, names any left unticked, and records the phase in
+docs/phase-log.md and the unticked criteria in docs/operator-todo.md, never
+in root CLAUDE.md (see reference/doc-routing.md).
 
 Plans can be **scoped**: `/phaser:plan ats 10` records Phase 10 in
 `docs/phases/implementation-plan-ats.md` instead of the default
@@ -165,6 +167,7 @@ phaser/
 │   ├── implementer.md            # Sonnet executor for /phaser:apply
 │   └── reviewer.md               # Opus cold read for /phaser:review
 ├── reference/
-│   └── decision-protocol.md      # shared describe-then-select protocol
+│   ├── decision-protocol.md      # shared describe-then-select protocol
+│   └── doc-routing.md            # where phase docs go
 └── README.md
 ```

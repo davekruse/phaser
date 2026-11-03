@@ -43,6 +43,18 @@ Build a written list of findings. Examine at minimum these angles:
   task where the implementer would have to choose or architect.
 - Are tasks correctly ordered with no forward dependencies?
 - If the phase lists "Companion docs", does a task reconcile each of them?
+- Root CLAUDE.md growth. If a task or spec delta adds anything to root
+  CLAUDE.md (including creating it) other than an index line
+  or a rule that breaks things when ignored — e.g. "add a block under
+  Phase N status" — report a Decision tagged `[auto]` (or untagged, when
+  the phase's Requirements, Constraints or Companion docs explicitly ask
+  for that content in root CLAUDE.md) whose recommended option reroutes
+  the task: how an area works now to the nearest folder
+  CLAUDE.md, recipes to `docs/runbook.md`, reasons to `docs/decisions.md`,
+  per-phase narrative to `docs/phase-log.md` (or the paths a "Recording a
+  phase" section in root CLAUDE.md names). If root CLAUDE.md exists and
+  `wc -c < CLAUDE.md` exceeds 25600 (about 25 KB), report a Question
+  recommending a split; never tag that one `[auto]`.
 - Do the proposal or spec deltas drift from decisions recorded in the phase
   itself (requirements, constraints / early decisions)? Those are the user's
   decisions — flag drift, don't relitigate them.

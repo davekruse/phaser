@@ -99,6 +99,18 @@ Then review what openspec generated and edit the proposal artifacts so that:
   breaking migrations) and security-critical behavior (auth boundaries,
   visibility rules) each get their own dedicated task — never folded into a
   larger one. Same for any "Companion docs" reconciliation the phase lists.
+- Every documentation task follows
+  `${CLAUDE_PLUGIN_ROOT}/reference/doc-routing.md` (read it first): a task
+  that edits root CLAUDE.md may only add or update an index line or add a
+  rule that breaks things when ignored; how an area works now goes in the
+  nearest folder CLAUDE.md; recipes go in the runbook; the reasons behind
+  choices go in the decisions log. Never write a task to "add a block under
+  Phase N status" in CLAUDE.md — the phase log entry is archive's job. If
+  the project's root CLAUDE.md has a "Recording a phase" rule, follow it
+  over these defaults. A Companion doc naming root CLAUDE.md is routed the
+  same way, unless the phase's Requirements, Constraints or Companion docs
+  explicitly ask for that specific content in root CLAUDE.md; then keep
+  it there as asked.
 
 ## Step 4: Hand off
 
