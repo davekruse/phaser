@@ -682,3 +682,95 @@ grep no longer collides with it). The user chose that narrative a phase
 explicitly asks for in root CLAUDE.md is raised without `[auto]`, that the
 index-line match is scope-aware, and that an archive re-run replaces its
 phase-log and to-do sections instead of appending.
+
+## Phase 8: /phaser:clean splits a bloated root CLAUDE.md
+
+**Status:** Complete (2026-11-05, change add-clean-command)
+**Defined:** 2026-11-03
+**Apply notes:** 2026-11-05; deviations: none
+**Review notes:** 2026-11-05; verdict: yes; deferred: none; criteria: met 1,2,3,4,6; unverifiable 5; auto-applied: none
+
+### Goal
+A one-time `/phaser:clean` command moves the phase narrative, recipes,
+reasoning and area detail out of an existing bloated root CLAUDE.md into
+the destinations Phase 7 defined. Root CLAUDE.md keeps only index lines and
+rules that break things when ignored.
+
+### Requirements
+- New command `commands/clean.md` (`/phaser:clean`), runnable in any
+  project, independent of the plan file and of `/phaser:stun`.
+- It sorts every block of root CLAUDE.md into one destination from
+  `reference/doc-routing.md` (phase log, operator to-do, runbook, decisions
+  log, nearest folder CLAUDE.md), keep, or drop. A project's "Recording a
+  phase" section overrides the defaults.
+- It presents one migration plan (a table of each block → destination,
+  with drops listed separately) and writes nothing until the user approves
+  it or edits it and then approves.
+- Clean-tree guard: it refuses to run if root CLAUDE.md or any destination
+  file has uncommitted changes.
+- No silent loss: every block is moved or kept. Drop is allowed only when
+  the same text already exists in the plan file or another doc, and each
+  drop names where the text exists. Destination files are appended to,
+  never overwritten.
+- After the split, root CLAUDE.md carries a short "Recording a phase"
+  section naming the destinations, unless one already exists.
+- It reports root CLAUDE.md's size before and after, and how many blocks
+  went to each destination.
+- README lists the command; version bump to 0.5.8.
+
+### Out of scope
+- Cleaning up folder CLAUDE.md files (they are only appended to).
+- Rewording or condensing content that stays or moves.
+- Auto-commit.
+- Plan-file status or `/phaser:stun` integration.
+
+### Dependencies
+- Phase 7 (`reference/doc-routing.md`, the destinations, the "Recording a
+  phase" override).
+
+### Acceptance criteria
+- [x] `test -f commands/clean.md` exits 0.
+- [x] `grep -c "doc-routing.md" commands/clean.md` returns 1 or more.
+- [x] `grep -c "Recording a phase" commands/clean.md` returns 1 or more.
+- [x] `grep -c "phaser:clean" README.md` returns 1 or more.
+- [ ] Fixture test I (user-run). In `../temp`, seed a root CLAUDE.md over
+      25 KB with phase-status blocks, a recipe and a rationale paragraph,
+      commit it, then run `/phaser:clean`. Pass when one plan is shown
+      before any write, root CLAUDE.md ends under 25 KB with a "Recording a
+      phase" section, every block is found in its destination, and
+      `git diff` shows no deleted text missing from the plan's drop list.
+- [x] `.claude-plugin/plugin.json` reads `0.5.8`.
+
+### Constraints / early decisions
+- One-plan approval, not per-block pickers (user, 2026-11-03).
+- Standalone utility (user, 2026-11-03).
+- Content moves verbatim (user, 2026-11-03).
+- Moved phase blocks use archive's heading only when it is safe;
+  otherwise `## Phase N (from CLAUDE.md) — <title>`, appended at the end
+  (user, scrutiny 2026-11-05).
+- Phase matching mirrors archive's scope handling (user, scrutiny
+  2026-11-05).
+- Patch release.
+
+### Key code touchpoints
+- `reference/doc-routing.md`: the routing table clean applies; confirm it
+  needs no change.
+- `commands/archive.md` Step 4: the phase-log heading format clean should
+  reuse for moved phase blocks.
+- `reference/decision-protocol.md`: the approval picker.
+- `commands/{plan,propose,scrutinize,apply,review,archive,stun}.md`,
+  `agents/*.md`: no change; confirm.
+
+### Companion docs
+- `README.md`: the command table and repo layout tree.
+
+### Scrutiny notes (2026-11-05)
+6 findings; auto-applied: 3. I applied three no-downside fixes: when a `##`
+section is split at `###`, its heading and intro text become their own
+block; a section headed "Recording a phase" is always kept; `##`/`###` lines
+inside fenced code blocks are not treated as headings. The user chose that
+moved phase blocks use archive's heading only when one plan file matches,
+the phase is Complete and the log has no section for it, and otherwise get
+`## [<scope> ]Phase N (from CLAUDE.md) — <title>` appended at the end of the
+log; that phase matching mirrors archive's scope prefix; and that the guard
+stays as is, with no check for a gitignored CLAUDE.md.
