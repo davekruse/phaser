@@ -1,7 +1,12 @@
 # phaser
 
-A Claude Code plugin implementing a phased, spec-driven development workflow on
-top of [OpenSpec](https://github.com/Fission-AI/OpenSpec) (`/opsx` commands).
+Phaser is a spec-driven workflow that manages context: each feature moves
+through plan, spec, scrutiny, build, review and archive, with every step
+starting fresh from the spec, so you make the decisions and AI builds exactly
+what you decided.
+
+A Claude Code plugin built on top of
+[OpenSpec](https://github.com/Fission-AI/OpenSpec) (`/opsx` commands).
 
              ▄▄▄▄▄▄▄▄
          ▄▄▄▄█▓▓▓▓▓▓█▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -42,6 +47,7 @@ judge only the artifacts on disk, with nothing for you to remember to do first.
 | 5    | `/phaser:review`    | Opus 5.5 (subagent)            | Senior review of the phase's changes, item by item |
 | 6    | `/phaser:archive`   | Sonnet (latest)                | `/opsx:archive` + tick acceptance criteria + write phase log + mark phase Complete |
 |      | `/phaser:stun`      | Opus 5.5                       | Drives a phase Planned -> Complete, pausing only for your decisions |
+|      | `/phaser:clean`     | Opus 5.5                       | One-time split of a bloated root CLAUDE.md into the doc-routing destinations, after you approve one plan |
 
 `/phaser:stun` dispatches one step — whichever the plan file's status line
 calls for — and that step chains to the next itself, all the way to Complete.
@@ -160,6 +166,7 @@ phaser/
 │   ├── apply.md                  # /phaser:apply      (model: sonnet)
 │   ├── review.md                 # /phaser:review     (model: opus)
 │   ├── archive.md                # /phaser:archive    (model: sonnet)
+│   ├── clean.md                  # /phaser:clean      (model: opus)
 │   └── stun.md                   # /phaser:stun       (model: opus)
 ├── agents/
 │   ├── spec-advisor.md           # Opus advisor consulted by /phaser:apply
